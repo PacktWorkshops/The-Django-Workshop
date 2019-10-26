@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}List of Books{% endblock %}
+
+{% block heading %}List of Books{% endblock %}
+
+{% block logo %}<img src="{% static "reviews/bookr_reviews_logo.png" %}">{% endblock %}
+
+{% block content %}
+<ul>
+    {% for book in books %}
+    <li>
+        <a href="{% url 'book_detail' book.title %}">{{ book.title }}</a>
+    </li>
+    {% empty %}
+    <li>
+        No books found.
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
