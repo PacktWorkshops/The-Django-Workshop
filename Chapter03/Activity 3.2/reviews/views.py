@@ -43,7 +43,6 @@ def detail_contributor(request, contributor_name):
     last_names = contributor_name.split()[1]
     contributor = Contributor.objects.get(first_names=first_names, last_names=last_names)
     role = BookContributor.objects.filter(contributor = contributor.id).first()
-    print(role)
     books= contributor.book_set.all().first()
 
 
