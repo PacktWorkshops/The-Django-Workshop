@@ -42,9 +42,15 @@ def detail_contributor(request, contributor_name):
     first_names = contributor_name.split()[0]
     last_names = contributor_name.split()[1]
     contributor = Contributor.objects.get(first_names=first_names, last_names=last_names)
-    books = contributor.book_set.all()
+    role = BookContributor.objects.filter(contributor = contributor.id).first()
+    print(role)
+    books= contributor.book_set.all().first()
+
+
     context = {
         "contributor": contributor,
+         "role" : role,
         "book": books
+
     }
     return render(request, 'reviews/detail_contributor.html', context)
