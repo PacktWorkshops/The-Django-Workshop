@@ -2,6 +2,6 @@
 
 from reviews.models import Book
 
-book = Book.objects.get(title='The Tailsman’)
+book = Book.objects.get(title='The Tailsman')
 contributors = book.contributors.all()
 print(contributors)
