@@ -1,9 +1,6 @@
 {% extends 'reviews/base.html' %}
 
 {% block content %}
-<ul class="list-group">
-  {% for book in books %}
-  <li class="list-group-item">
       <span class="text-info">Title: </span> <span>{{ book.title }}</span>
       <br>
       <span class="text-info">Publisher: </span><span>{{ book.publisher }}</span>
@@ -13,7 +10,4 @@
       <span class="text-info">Rating: </span><span class="badge badge-primary badge-pill">5</span>
       <br>
       <a href="/book/{{ book.id }}/">Reviews</a></li>
-  </li>
-  {% endfor %}
-</ul>
 {% endblock %}
