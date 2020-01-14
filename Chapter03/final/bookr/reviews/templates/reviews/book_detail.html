@@ -10,7 +10,7 @@
       <br>
       <span class="text-info">Publication Date: </span><span>{{ book.publication_date }}</span>
       <br>
-      {% if reviews is null %}
+      {% if not reviews %}
             <hr>
             <h3>Be the first one to write a review.</h3>
       {% else %}
