@@ -18,6 +18,7 @@
             <br>
             <hr>
             <h3>Review Comments</h3>
+            <ul>
             {% for review in reviews %}
                   <li class="list-group-item">
                         <span class="text-info">Review comment: </span> <span>{{ review.content }}</span>
@@ -32,5 +33,6 @@
                         <br>
                   </li>
             {% endfor %}
+            </ul>
       {% endif %}
 {% endblock %}
