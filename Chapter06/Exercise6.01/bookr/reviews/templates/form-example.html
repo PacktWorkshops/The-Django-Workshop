@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post">
+    <p>
+        <input type="text" name="text_input" value="Text Input">
+    </p>
+    <p>
+        <input type="password" name="password_input" value="Password Input">
+    </p>
+    <p>
+        <input type="checkbox" name="checkbox_on" value="Checkbox Checked" checked>
+    </p>
+    <p>
+        <input type="radio" name="radio_input" value="Value One">
+        <input type="radio" name="radio_input" value="Value Two" checked>
+        <input type="radio" name="radio_input" value="Value Three">
+    </p>
+    <p>
+        <select name="favorite_book">
+            <optgroup label="Non-Fiction">
+                <option value="1">Deep Learning with Keras</option>
+                <option value="2">The Django Workshop</option>
+            </optgroup>
+            <optgroup label="Fiction">
+                <option value="3">Brave New World</option>
+                <option value="4">The Great Gatsby</option>
+            </optgroup>
+        </select>
+    </p>
+    <p>
+        <select name="books_you_own" multiple>
+            <optgroup label="Non-Fiction">
+                <option value="1">Deep Learning with Keras</option>
+                <option value="2">The Django Workshop</option>
+            </optgroup>
+            <optgroup label="Fiction">
+                <option value="3">Brave New World</option>
+                <option value="4">The Great Gatsby</option>
+            </optgroup>
+        </select>
+    </p>
+    <p>
+        <textarea name="text_area">Text Area Value</textarea>
+    </p>
+    <p>
+        <input type="number" name="number_input" value="3.14159" step="any">
+    </p>
+    <p>
+        <input type="email" name="email_input" value="user@example.com">
+    </p>
+    <p>
+        <input type="date" name="date_input" value="2019-11-23">
+    </p>
+    <p>
+        <input type="submit" name="submit_input" value="Submit Input">
+    </p>
+    <p>
+        <button type="submit" name="button_element" value="Button Element">
+            Button With <strong>Styled</strong> Text
+        </button>
+    </p>
+    <input type="hidden" name="hidden_input" value="Hidden Value">
+</form>
+</body>
+</html>
