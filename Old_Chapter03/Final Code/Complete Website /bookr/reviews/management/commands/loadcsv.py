@@ -1,6 +1,7 @@
 import csv
 import re
 
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from reviews.models import Publisher, Contributor, Book, BookContributor, Review
 
@@ -11,14 +12,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--csv', type=str)
 
-    def row_to_dict(self, row, header):
+    @staticmethod
+    def row_to_dict(row, header):
         if len(row) < len(header):
             row += [''] * (len(header) - len(row))
         return dict([(header[i], row[i]) for i, head in enumerate(header) if head])
 
-    def handle(self,  *args, **options):
-
-        m = re.compile('content:(\w+)')
+    def handle(self, *args, **options):
+        m = re.compile(r'content:(\w+)')
         header = None
         models = dict()
         try:
@@ -36,39 +37,67 @@ class Command(BaseCommand):
                         continue
 
                     row_dict = self.row_to_dict(row, header)
-                    if set(row_dict.values()) == set(['']):
+                    if set(row_dict.values()) == {''}:
                         continue
                     models[model_name].append(row_dict)
 
-        except FileNotFoundError as f:
-            raise CommandError('File "%s" does not exist' % options['csv'])
+        except FileNotFoundError:
+            raise CommandError('File "{}" does not exist'.format(options['csv']))
 
         for data_dict in models.get('Publisher', []):
-            print('Publisher')
-            p = Publisher(name=data_dict['publisher_name'],
-                          website=data_dict['publisher_website'],
-                          email=data_dict['publisher_email'])
-            p.save()
+            p, created = Publisher.objects.get_or_create(name=data_dict['publisher_name'], defaults={
+                'website': data_dict['publisher_website'],
+                'email': data_dict['publisher_email']
+            })
+
+            if created:
+                print('Created Publisher "{}"'.format(p.name))
 
         for data_dict in models.get('Book', []):
-            print('Book')
-            b = Book(title=data_dict['book_title'],
-                     publication_date=data_dict['book_publication_date'].replace('/', '-'),
-                     isbn=data_dict['book_isbn'],
-                     publisher=Publisher.objects.filter(name=data_dict['book_publisher_name']).first())
-            b.save()
+            b, created = Book.objects.get_or_create(title=data_dict['book_title'], defaults={
+                'publication_date': data_dict['book_publication_date'].replace('/', '-'),
+                'isbn': data_dict['book_isbn'],
+                'publisher': Publisher.objects.get(name=data_dict['book_publisher_name'])
+            })
+
+            if created:
+                print('Created Publisher "{}"'.format(b.title))
 
         for data_dict in models.get('Contributor', []):
-            print('Contributor')
-            c = Contributor(first_names=data_dict['contributor_first_names'],
-                            last_names=data_dict['contributor_last_names'],
-                            email=data_dict['contributor_email'])
-            c.save()
+            c, created = Contributor.objects.get_or_create(first_names=data_dict['contributor_first_names'],
+                                                           last_names=data_dict['contributor_last_names'],
+                                                           email=data_dict['contributor_email'])
+
+            if created:
+                print('Created Contributor "{} {}"'.format(data_dict['contributor_first_names'],
+                                                           data_dict['contributor_last_names']))
 
         for data_dict in models.get('BookContributor', []):
-            print('BookContributor')
-            bc = BookContributor(book=Book.objects.filter(title=data_dict['book_contributor_book']).first(),
-                                 contributor=Contributor.objects.filter(
-                                     email=data_dict['book_contributor_contributor']).first(),
-                                 role=data_dict['book_contributor_role'])
-            bc.save()
+            book = Book.objects.get(title=data_dict['book_contributor_book'])
+            contributor = Contributor.objects.get(email=data_dict['book_contributor_contributor'])
+            bc, created = BookContributor.objects.get_or_create(book=book,
+                                                                contributor=contributor,
+                                                                role=data_dict['book_contributor_role'])
+            if created:
+                print('Created BookContributor "{}" -> "{}"'.format(contributor.email, book.title))
+
+        for data_dict in models.get('Review', []):
+            creator, created = User.objects.get_or_create(email=data_dict['review_creator'],
+                                                          username=data_dict['review_creator'])
+
+            if created:
+                print('Created User "{}"'.format(creator.email))
+            book = Book.objects.get(title=data_dict['review_book'])
+
+            review, created = Review.objects.get_or_create(content=data_dict['review_content'],
+                                                           book=book,
+                                                           creator=creator,
+                                                           defaults={
+                                                               'rating': data_dict['review_rating'],
+                                                               'date_created': data_dict['review_date_created'],
+                                                               'date_edited': data_dict['review_date_edited']
+                                                           })
+            if created:
+                print('Created Review: "{}" -> "{}"'.format(book.title, creator.email))
+
+        print("Import complete")
