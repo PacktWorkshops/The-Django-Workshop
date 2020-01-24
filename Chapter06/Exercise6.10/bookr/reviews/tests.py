@@ -1,13 +1,8 @@
 import re
-from unittest import mock
 
-from django.http import HttpRequest, QueryDict
 from django.test import Client
 from django.test import TestCase
-
-from reviews.forms import PublisherForm
 from reviews.models import Publisher
-from reviews.views import publisher_edit
 
 
 class Exercise10Test(TestCase):
