@@ -2,11 +2,9 @@ import os
 from unittest import mock
 from urllib.request import urlopen
 
-from PIL import Image
 from django import forms
 from django.conf import settings
 from django.test import LiveServerTestCase, Client
-
 from reviews.forms import UploadForm
 from reviews.models import ExampleModel
 from reviews.views import media_example
