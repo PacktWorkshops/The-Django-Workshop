@@ -9,3 +9,4 @@ class Activity1Test(TestCase):
         response = c.get('/')
         self.assertIn(b'<title>Welcome to Bookr</title>', response.content)
         self.assertIn(b'<h1>Welcome to Bookr</h1>', response.content)
+

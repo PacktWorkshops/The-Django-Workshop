@@ -10,7 +10,6 @@ class Activity2Test(TestCase):
         self.assertIn(b'<title>Welcome to Bookr</title>', response.content)
         self.assertIn(b'<h1>Welcome to Bookr</h1>', response.content)
 
-class Activity2Test(TestCase):
     def test_no_search(self):
         """Test output when no query string is set."""
         c = Client()

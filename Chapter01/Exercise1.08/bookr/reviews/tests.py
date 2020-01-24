@@ -7,4 +7,4 @@ class Exercise8TestCase(TestCase):
         """The view should raise a NameError exception"""
         c = Client()
         with self.assertRaises(NameError):
-            response = c.get('/')
+            c.get('/')

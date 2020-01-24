@@ -12,4 +12,3 @@ class Exercise1TestCase(TestCase):
         c = Client()
         response = c.get('/admin/')
         self.assertEqual(response.status_code, 302)  # redirect to login page
-
