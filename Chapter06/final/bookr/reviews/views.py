@@ -3,8 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
 from .forms import PublisherForm, ReviewForm, SearchForm
-from .models import Book, Contributor
-from .models import Publisher, Review
+from .models import Book, Contributor, Publisher, Review
 from .utils import average_rating
 
 

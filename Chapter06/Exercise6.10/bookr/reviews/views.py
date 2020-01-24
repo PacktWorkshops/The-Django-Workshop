@@ -2,8 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import PublisherForm
-from .models import Book
-from .models import Publisher
+from .models import Book, Publisher
 from .utils import average_rating
 
 
