@@ -5,6 +5,7 @@ class PublisherAdmin(admin.ModelAdmin):
     search_fields = ('name__startswith',)
 
 class BookAdmin(admin.ModelAdmin):
+    date_hierarchy = 'publication_date'
     list_display = ('title', 'isbn')
     list_filter = ('publisher', 'publication_date')
     search_fields = ('title', 'isbn', 'publisher__name')
