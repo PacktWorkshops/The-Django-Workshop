@@ -16,16 +16,16 @@ class Exercise6Test(TestCase):
     def test_django_conf(self):
         """
         Check that `reviews` is in `settings.INSTALLED_APPS`, the static dir is set to <projectdir>/static,
-        STATIC_DIR is set to the static_temp directory and STATICFILES_STORAGE is ManifestStaticFilesStorage.
+        STATIC_DIR is set to the static_production_test directory and STATICFILES_STORAGE is ManifestStaticFilesStorage.
         """
         self.assertIn('reviews', settings.INSTALLED_APPS)
         self.assertEquals([settings.BASE_DIR + '/static'], settings.STATICFILES_DIRS)
-        self.assertEquals(settings.BASE_DIR + '/static_temp', settings.STATIC_ROOT)
+        self.assertEquals(settings.BASE_DIR + '/static_production_test', settings.STATIC_ROOT)
         self.assertEquals(settings.STATICFILES_STORAGE, 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage')
 
     def test_collect_static(self):
         """Test the result of the collectstatic command."""
-        static_output_dir = os.path.join(settings.BASE_DIR, 'static_temp')
+        static_output_dir = os.path.join(settings.BASE_DIR, 'static_production_test')
         call_command('collectstatic', '--noinput')
         self.assertTrue(os.path.isdir(static_output_dir))
         self.assertTrue(os.path.isdir(os.path.join(static_output_dir, 'admin')))
@@ -33,7 +33,7 @@ class Exercise6Test(TestCase):
         self.assertTrue(os.path.exists(os.path.join(static_output_dir, 'main.css')))
 
         # Also some tests for manifest generated files
-        manifest_path = os.path.join(settings.BASE_DIR, 'static_temp', 'staticfiles.json')
+        manifest_path = os.path.join(settings.BASE_DIR, 'static_production_test', 'staticfiles.json')
         self.assertTrue(os.path.exists(manifest_path))
 
         with open(manifest_path) as f:
