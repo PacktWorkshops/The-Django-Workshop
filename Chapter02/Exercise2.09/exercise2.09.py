@@ -8,3 +8,8 @@ print(books)
 publisher = Publisher.objects.get(book__title='Advanced Deep Learning with Keras')
 print(publisher)
 
+book = Book.objects.get(title='The Talisman')
+print(book.publisher)
+
+publisher = Publisher.objects.get(name='Pocket Books')
+publisher.book_set.all()
