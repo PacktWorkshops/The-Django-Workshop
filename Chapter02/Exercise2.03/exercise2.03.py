@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from datetime import date
-from reviews.models import Publisher
+from reviews.models import Book, Publisher
 
 publisher = Publisher.objects.get(name='Packt Publishing')
 

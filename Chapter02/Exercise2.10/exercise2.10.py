@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from reviews.models import Publisher
+from reviews.models import Contributor
 
-publisher = Publisher.objects.get(book__title='Advanced Deep Learning with Keras')
-print(publisher)
-
+Contributor.objects.filter(book__title='The Talisman')
