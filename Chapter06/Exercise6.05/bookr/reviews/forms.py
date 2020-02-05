@@ -32,7 +32,7 @@ class ExampleForm(forms.Form):
     text_area = forms.CharField(widget=forms.Textarea)
     integer_input = forms.IntegerField()
     float_input = forms.FloatField()
-    decimal_input = forms.DecimalField()
+    decimal_input = forms.DecimalField(max_digits=3)
     email_input = forms.EmailField()
     date_input = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     hidden_input = forms.CharField(widget=forms.HiddenInput, initial="Hidden Value")

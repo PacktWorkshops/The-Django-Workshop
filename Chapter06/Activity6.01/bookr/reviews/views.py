@@ -1,9 +1,7 @@
-from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
 
-from django.shortcuts import render, get_object_or_404, redirect
-
-from .models import Publisher, Book
-from .forms import PublisherForm
+from .forms import ExampleForm, SearchForm
+from .models import Book, Contributor
 from .utils import average_rating
 
 
@@ -13,7 +11,22 @@ def index(request):
 
 def book_search(request):
     search_text = request.GET.get("search", "")
-    return render(request, "reviews/search-results.html", {"search_text": search_text})
+    form = SearchForm(request.GET)
+    books = set()
+
+    if form.is_valid() and form.cleaned_data["search"]:
+        search = form.cleaned_data["search"]
+        search_in = form.cleaned_data.get("search_in") or "title"
+        if search_in == "title":
+            books = Book.objects.filter(title__icontains=search)
+        else:
+            contributors = Contributor.objects.filter(first_names__icontains=search) | \
+                           Contributor.objects.filter(last_names__icontains=search)
+            for contributor in contributors:
+                for book in contributor.book_set.all():
+                    books.add(book)
+
+    return render(request, "reviews/search-results.html", {"form": form, "search_text": search_text, "books": books})
 
 
 def book_list(request):
@@ -54,24 +67,13 @@ def book_detail(request, pk):
     return render(request, "reviews/book_detail.html", context)
 
 
-def publisher_edit(request, pk=None):
-    if pk is not None:
-        publisher = get_object_or_404(Publisher, pk=pk)
-    else:
-        publisher = None
-
+def form_example(request):
     if request.method == "POST":
-        form = PublisherForm(request.POST, instance=publisher)
+        form = ExampleForm(request.POST)
         if form.is_valid():
-            updated_publisher = form.save()
-            if publisher is None:
-                messages.success(request, "Publisher \"{}\" was created.".format(updated_publisher))
-            else:
-                messages.success(request, "Publisher \"{}\" was updated.".format(updated_publisher))
-
-            return redirect("publisher_detail", updated_publisher.pk)
+            for name, value in form.cleaned_data.items():
+                print("{}: ({}) {}".format(name, type(value), value))
     else:
-        form = PublisherForm(instance=publisher)
+        form = ExampleForm()
 
-    return render(request, "reviews/instance-form.html",
-                  {"form": form, "instance": publisher, "model_type": "Publisher"})
+    return render(request, "form-example.html", {"method": request.method, "form": form})

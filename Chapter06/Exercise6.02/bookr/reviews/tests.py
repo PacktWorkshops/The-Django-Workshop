@@ -1,12 +1,17 @@
+import re
+
 from django.test import TestCase
 from django.test import Client
 
 
 class Exercise2Test(TestCase):
     def test_fields_in_view(self):
-        """"Test that all the fields we defined appear in the HTML from the view."""
+        """"Test that all the fields we defined appear in the HTML from the view, including newly-added CSRF token."""
         c = Client()
         response = c.get('/form-example/')
+
+        self.assertIsNotNone(re.search(r'<input type="hidden" name="csrfmiddlewaretoken" value="\w+">',
+                                       response.content.decode('ascii')))
 
         self.assertIn(b'<label for="id_text_input">Text Input</label><br>', response.content)
         self.assertIn(

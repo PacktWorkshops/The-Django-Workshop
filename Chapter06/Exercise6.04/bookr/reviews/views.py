@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
+from .forms import ExampleForm
 from .models import Book
 from .utils import average_rating
 
@@ -54,5 +55,5 @@ def book_detail(request, pk):
 def form_example(request):
     for name in request.POST:
         print("{}: {}".format(name, request.POST.getlist(name)))
-
-    return render(request, "form-example.html", {"method": request.method})
+    form = ExampleForm()
+    return render(request, "form-example.html", {"method": request.method, "form": form})

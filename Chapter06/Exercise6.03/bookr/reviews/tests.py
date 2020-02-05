@@ -1,7 +1,12 @@
 import re
 
+from django.http import HttpRequest, QueryDict
 from django.test import TestCase
 from django.test import Client
+
+from unittest import mock
+
+from reviews.views import form_example
 
 
 class Exercise3Test(TestCase):
@@ -75,3 +80,50 @@ class Exercise3Test(TestCase):
         self.assertIn(b'Button With <strong>Styled</strong> Text', response.content)
         self.assertIn(b'</button>', response.content)
         self.assertIn(b'<input type="hidden" name="hidden_input" value="Hidden Value">', response.content)
+
+    def test_method_in_view(self):
+        """Test that the method is included in the HTML output"""
+        c = Client()
+        response = c.get('/form-example/')
+        self.assertIn(b'<h4>Method: GET</h4>', response.content)
+
+        response = c.post('/form-example/')
+        self.assertIn(b'<h4>Method: POST</h4>', response.content)
+
+    @mock.patch('reviews.views.print')
+    def test_get_debug_output(self, mock_print):
+        """Mock the print() function to test the debug output with GET request (no output)."""
+        mock_request = mock.MagicMock(spec=HttpRequest)
+        mock_request.method = 'GET'
+        mock_request.POST = QueryDict()
+        mock_request.META = {}
+        form_example(mock_request)
+        mock_print.assert_not_called()
+
+    @mock.patch('reviews.views.print')
+    def test_post_debug_output(self, mock_print):
+        """Mock the print() function to test the debug output with posted data."""
+        mock_request = mock.MagicMock(spec=HttpRequest)
+        mock_request.method = 'POST'
+        mock_request.POST = QueryDict(b'csrfmiddlewaretoken='
+                                      b'QgK9FsIIlrh5VJrq35Y9LnlLWLxn59XzQ9gDs3zh5VS29xxFnQol4R3dWwU1wfOO&'
+                                      b'text_input=Text&password_input=Password&checkbox_on=Checkbox+Checked&'
+                                      b'radio_input=Value+Two&favorite_book=1&books_you_own=1&books_you_own=3&'
+                                      b'text_area=Text+box+text.&number_input=4.5&email_input=user%40example.com&'
+                                      b'date_input=2019-11-23&button_element=Button+Element&hidden_input=Hidden+Value')
+        mock_request.META = {}
+        form_example(mock_request)
+        mock_print.assert_any_call(
+            "csrfmiddlewaretoken: ['QgK9FsIIlrh5VJrq35Y9LnlLWLxn59XzQ9gDs3zh5VS29xxFnQol4R3dWwU1wfOO']")
+        mock_print.assert_any_call("text_input: ['Text']")
+        mock_print.assert_any_call("password_input: ['Password']")
+        mock_print.assert_any_call("checkbox_on: ['Checkbox Checked']")
+        mock_print.assert_any_call("radio_input: ['Value Two']")
+        mock_print.assert_any_call("favorite_book: ['1']")
+        mock_print.assert_any_call("books_you_own: ['1', '3']")
+        mock_print.assert_any_call("text_area: ['Text box text.']")
+        mock_print.assert_any_call("number_input: ['4.5']")
+        mock_print.assert_any_call("email_input: ['user@example.com']")
+        mock_print.assert_any_call("date_input: ['2019-11-23']")
+        mock_print.assert_any_call("button_element: ['Button Element']")
+        mock_print.assert_any_call("hidden_input: ['Hidden Value']")

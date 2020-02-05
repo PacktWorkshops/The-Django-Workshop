@@ -1,14 +1,13 @@
 import re
-
-from django.http import HttpRequest, QueryDict
-from django.test import TestCase
-from django.test import Client
-from django import forms
-
 from unittest import mock
 
-from reviews.views import form_example
+from django import forms
+from django.http import HttpRequest, QueryDict
+from django.test import Client
+from django.test import TestCase
+
 from reviews.forms import ExampleForm, RADIO_CHOICES, BOOK_CHOICES
+from reviews.views import form_example
 
 
 class Exercise6Test(TestCase):
@@ -24,9 +23,9 @@ class Exercise6Test(TestCase):
                                        response.content.decode('ascii')))
 
         self.assertIn(b'<p><label for="id_text_input">Text input:</label> <input type="text" name="text_input" '
-                      b'required id="id_text_input"></p>', response.content)
-        self.assertIn(b'<label for="id_password_input">Password input:</label> <input type="password" '
-                      b'name="password_input" required id="id_password_input"></p>', response.content)
+                      b'maxlength="3" required id="id_text_input"></p>', response.content)
+        self.assertIn(b'<p><label for="id_password_input">Password input:</label> <input type="password" '
+                      b'name="password_input" minlength="8" required id="id_password_input"></p>', response.content)
         self.assertIn(b'<p><label for="id_checkbox_on">Checkbox on:</label> <input type="checkbox" '
                       b'name="checkbox_on" required id="id_checkbox_on"></p>', response.content)
 
@@ -62,25 +61,25 @@ class Exercise6Test(TestCase):
         mock_request = mock.MagicMock(spec=HttpRequest)
         mock_request.method = 'POST'
         mock_request.POST = QueryDict(
-            b'csrfmiddlewaretoken=R3b9QD25xhA2vkoZ6tvR5QAe1Xf7xQYtRWHDDeTEhLbZJ8ueqeV3okiG1ICLYWPI&text_input=Text'
-            b'&password_input=password&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=2'
-            b'&books_you_own=3&text_area=Test+Value&integer_input=10&float_input=11&decimal_input=123'
-            b'&email_input=user%40example.com&date_input=2019-12-06&hidden_input=Hidden+Value&submit_input=Submit+Input'
+            b'csrfmiddlewaretoken=9z38afmpT4579d1AWewuQrIppZFYbbjm9szCXQdYDyG4n17PgZWG9VqRpK2CChaB&text_input=tex&'
+            b'password_input=password123&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=1&'
+            b'books_you_own=4&text_area=Text&integer_input=10&float_input=3.4&decimal_input=1.345&'
+            b'email_input=user%40example.com&date_input=2019-12-11&hidden_input=Hidden+Value&submit_input=Submit+Input'
         )
         mock_request.META = {}
         form_example(mock_request)
-        mock_print.assert_any_call("text_input: (<class 'str'>) Text")
-        mock_print.assert_any_call("password_input: (<class 'str'>) password")
+        mock_print.assert_any_call("text_input: (<class 'str'>) tex")
+        mock_print.assert_any_call("password_input: (<class 'str'>) password123")
         mock_print.assert_any_call("checkbox_on: (<class 'bool'>) True")
         mock_print.assert_any_call("radio_input: (<class 'str'>) Value Two")
         mock_print.assert_any_call("favorite_book: (<class 'str'>) 1")
-        mock_print.assert_any_call("books_you_own: (<class 'list'>) ['2', '3']")
-        mock_print.assert_any_call("text_area: (<class 'str'>) Test Value")
+        mock_print.assert_any_call("books_you_own: (<class 'list'>) ['1', '4']")
+        mock_print.assert_any_call("text_area: (<class 'str'>) Text")
         mock_print.assert_any_call("integer_input: (<class 'int'>) 10")
-        mock_print.assert_any_call("float_input: (<class 'float'>) 11.0")
-        mock_print.assert_any_call("decimal_input: (<class 'decimal.Decimal'>) 123")
+        mock_print.assert_any_call("float_input: (<class 'float'>) 3.4")
+        mock_print.assert_any_call("decimal_input: (<class 'decimal.Decimal'>) 1.345")
         mock_print.assert_any_call("email_input: (<class 'str'>) user@example.com")
-        mock_print.assert_any_call("date_input: (<class 'datetime.date'>) 2019-12-06")
+        mock_print.assert_any_call("date_input: (<class 'datetime.date'>) 2019-12-11")
         mock_print.assert_any_call("hidden_input: (<class 'str'>) Hidden Value")
 
     def test_example_form(self):
@@ -111,7 +110,7 @@ class Exercise6Test(TestCase):
         self.assertIsInstance(form.fields['float_input'], forms.FloatField)
 
         self.assertIsInstance(form.fields['decimal_input'], forms.DecimalField)
-        self.assertEqual(form.fields['decimal_input'].max_digits, 3)
+        self.assertEqual(form.fields['decimal_input'].max_digits, 5)
 
         self.assertIsInstance(form.fields['email_input'], forms.EmailField)
 
