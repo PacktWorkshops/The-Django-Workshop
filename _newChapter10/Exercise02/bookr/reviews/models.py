@@ -1,5 +1,13 @@
 from django.contrib import auth
 from django.db import models
+from django.contrib.auth.models import User
+
+from django.contrib.auth import get_user_model
+
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+import bookr.settings as settings
 
 
 class Publisher(models.Model):
@@ -61,21 +69,12 @@ class BookContributor(models.Model):
     def __str__(self):
         return "{} ({})".format(self.contributor, self.role)
 
-
-# StarRatings = models.IntegerChoices('StarRatings', "☆ ☆☆ ☆☆☆ ☆☆☆☆ ☆☆☆☆☆")
-
 class Review(models.Model):
-    """
-    class (models.TextChoices):
-        AUTHOR = "AUTHOR", "Author"
-        CO_AUTHOR = "CO_AUTHOR", "Co-Author"
-        EDITOR = "EDITOR", "Editor"
-    """
     content = models.TextField(help_text="The Review text.")
+    rating = models.IntegerField(help_text="The the reviewer has given.")
     rating = models.IntegerField(help_text="The rating that the reviewer has given.",
-                                 # choices=StarRatings)
-                                 # choices=((1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')))
-                                 choices=((1, '☆'), (2, '☆☆'), (3, '☆☆☆'), (4, '☆☆☆☆'), (5, '☆☆☆☆☆')))
+                                 choices=((1, '☆'), (2, '☆☆'), (3, '☆☆☆'),
+                                          (4, '☆☆☆☆'), (5, '☆☆☆☆☆')))
     date_created = models.DateTimeField(auto_now_add=True,
                                         help_text="The date and time the review was created.")
     date_edited = models.DateTimeField(null=True,
@@ -86,4 +85,30 @@ class Review(models.Model):
                              help_text="The Book that this review is for.")
 
     def __str__(self):
-        return "{}: {}".format(self.creator.username, self.book.title)
+        username = getattr(self.creator, self.creator.USERNAME_FIELD)
+        return "{}: {}".format(username, self.book.title)
+
+UserModel = get_user_model()
+
+class ReviewerProfile(models.Model):
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100)
+    favourite_book = models.ForeignKey(Book, null=True,
+                                       on_delete=models.SET_NULL,
+                                       help_text="Your favourite book (if it is "
+                                       "present in Bookr)") 
+    profile_photo = models.ImageField(null=True, blank=True,
+                                      upload_to="profile_photos/")
+
+    """
+    def has_profile_photo(self):
+        return self.profile_photo and '🗿' or '&128511;'  # '&#1f5ff;' or ''
+    """
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_revierwer_profile(sender, created, instance, **kwargs):
+    if created:
+        profile = ReiviwerProfile(user=instance)
+        profile.save()
+
