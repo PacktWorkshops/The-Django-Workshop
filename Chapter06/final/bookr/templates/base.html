@@ -36,22 +36,14 @@
             </form>
           </div>
         </nav>
-        <div class="container-fluid">
-          {% for message in messages %}
-            <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag }}{% endif %}"
-                 role="alert">
-              {{ message }}
-            </div>
-          {% endfor %}
         {% block content %}
         {% endblock %}
-        </div>
   <!-- Copyright -->
   <footer class="page-footer font-small blue">
     <div class="footer-copyright text-center py-3">© 2020 Copyright:
       <a href="https://www.packtpub.com"> Packt Publications</a>
       <p>Website by: Packt Publications</p>
-      <p>Contact information: <a href="mailto:emailexample@email.com">emailexample@email.com</a></p>
+      <p>Contact information: <a href="mailto:email@example.com">email@example.com</a></p>
     </div>
   </footer>
   <!-- Copyright -->

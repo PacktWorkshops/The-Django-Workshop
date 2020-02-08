@@ -1,14 +1,13 @@
 import re
-
-from django.http import HttpRequest, QueryDict
-from django.test import TestCase
-from django.test import Client
-from django import forms
-
 from unittest import mock
 
-from reviews.views import form_example
+from django import forms
+from django.http import HttpRequest, QueryDict
+from django.test import Client
+from django.test import TestCase
+
 from reviews.forms import ExampleForm, RADIO_CHOICES, BOOK_CHOICES
+from reviews.views import form_example
 
 
 class Exercise5Test(TestCase):
@@ -45,13 +44,15 @@ class Exercise5Test(TestCase):
         self.assertIn(b'<h4>Method: POST</h4>', response.content)
 
     @mock.patch('reviews.views.print')
-    def test_get_debug_output(self, mock_print):
+    @mock.patch('reviews.views.ExampleForm')
+    def test_get_debug_output(self, mock_example_form, mock_print):
         """Mock the print() function to test the debug output with GET request (no output)."""
         mock_request = mock.MagicMock(spec=HttpRequest)
         mock_request.method = 'GET'
         mock_request.POST = QueryDict()
         mock_request.META = {}
         form_example(mock_request)
+        mock_example_form.assert_called_with()
         mock_print.assert_not_called()
 
     @mock.patch('reviews.views.print')
@@ -60,29 +61,26 @@ class Exercise5Test(TestCase):
         mock_request = mock.MagicMock(spec=HttpRequest)
         mock_request.method = 'POST'
         mock_request.POST = QueryDict(
-            b'csrfmiddlewaretoken=I6vbozNPwTAccdT5dbxgWL4gRAX4DSkTIZ1FbaEognb9q1ZkxWXsffMIRlkI4Yb8&text_input=Some+text'
-            b'&password_input=password&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=1'
-            b'&books_you_own=4&text_area=This+is+my+text.&integer_input=10&float_input=10.5&decimal_input=11.5'
-            b'&email_input=user%40example.com&date_input=2019-12-19&hidden_input=Hidden+Value&submit_input=Submit+Input'
+            b'csrfmiddlewaretoken=R3b9QD25xhA2vkoZ6tvR5QAe1Xf7xQYtRWHDDeTEhLbZJ8ueqeV3okiG1ICLYWPI&text_input=Text'
+            b'&password_input=password&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=2'
+            b'&books_you_own=3&text_area=Test+Value&integer_input=10&float_input=11&decimal_input=123'
+            b'&email_input=user%40example.com&date_input=2019-12-06&hidden_input=Hidden+Value&submit_input=Submit+Input'
         )
         mock_request.META = {}
         form_example(mock_request)
-        mock_print.assert_any_call(
-            "csrfmiddlewaretoken: ['I6vbozNPwTAccdT5dbxgWL4gRAX4DSkTIZ1FbaEognb9q1ZkxWXsffMIRlkI4Yb8']")
-        mock_print.assert_any_call("text_input: ['Some text']")
-        mock_print.assert_any_call("password_input: ['password']")
-        mock_print.assert_any_call("checkbox_on: ['on']")
-        mock_print.assert_any_call("radio_input: ['Value Two']")
-        mock_print.assert_any_call("favorite_book: ['1']")
-        mock_print.assert_any_call("books_you_own: ['1', '4']")
-        mock_print.assert_any_call("text_area: ['This is my text.']")
-        mock_print.assert_any_call("integer_input: ['10']")
-        mock_print.assert_any_call("float_input: ['10.5']")
-        mock_print.assert_any_call("decimal_input: ['11.5']")
-        mock_print.assert_any_call("email_input: ['user@example.com']")
-        mock_print.assert_any_call("date_input: ['2019-12-19']")
-        mock_print.assert_any_call("hidden_input: ['Hidden Value']")
-        mock_print.assert_any_call("submit_input: ['Submit Input']")
+        mock_print.assert_any_call("text_input: (<class 'str'>) Text")
+        mock_print.assert_any_call("password_input: (<class 'str'>) password")
+        mock_print.assert_any_call("checkbox_on: (<class 'bool'>) True")
+        mock_print.assert_any_call("radio_input: (<class 'str'>) Value Two")
+        mock_print.assert_any_call("favorite_book: (<class 'str'>) 1")
+        mock_print.assert_any_call("books_you_own: (<class 'list'>) ['2', '3']")
+        mock_print.assert_any_call("text_area: (<class 'str'>) Test Value")
+        mock_print.assert_any_call("integer_input: (<class 'int'>) 10")
+        mock_print.assert_any_call("float_input: (<class 'float'>) 11.0")
+        mock_print.assert_any_call("decimal_input: (<class 'decimal.Decimal'>) 123")
+        mock_print.assert_any_call("email_input: (<class 'str'>) user@example.com")
+        mock_print.assert_any_call("date_input: (<class 'datetime.date'>) 2019-12-06")
+        mock_print.assert_any_call("hidden_input: (<class 'str'>) Hidden Value")
 
     def test_example_form(self):
         """Test that the ExampleForm class exists and has the attributes we expect."""
@@ -112,6 +110,7 @@ class Exercise5Test(TestCase):
         self.assertIsInstance(form.fields['float_input'], forms.FloatField)
 
         self.assertIsInstance(form.fields['decimal_input'], forms.DecimalField)
+        self.assertEqual(form.fields['decimal_input'].max_digits, 3)
 
         self.assertIsInstance(form.fields['email_input'], forms.EmailField)
 

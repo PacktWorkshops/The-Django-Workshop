@@ -1,85 +1,38 @@
 import re
-
-from django.http import HttpRequest, QueryDict
-from django.test import TestCase
-from django.test import Client
-
 from unittest import mock
 
+from django import forms
+from django.http import HttpRequest, QueryDict
+from django.test import Client
+from django.test import TestCase
+
+from reviews.forms import ExampleForm, RADIO_CHOICES, BOOK_CHOICES
 from reviews.views import form_example
 
 
 class Exercise4Test(TestCase):
     def test_fields_in_view(self):
-        """"Test that all the fields we defined appear in the HTML from the view, including newly-added CSRF token."""
+        """"
+        Test that some fields exist in the rendered template, assume that if all the fields exist on the form class
+        (there is a separate test for this) then they will all be rendered. There's no reason why only some would be.
+        """
         c = Client()
         response = c.get('/form-example/')
 
         self.assertIsNotNone(re.search(r'<input type="hidden" name="csrfmiddlewaretoken" value="\w+">',
                                        response.content.decode('ascii')))
 
-        self.assertIn(b'<label for="id_text_input">Text Input</label><br>', response.content)
-        self.assertIn(
-            b'<input id="id_text_input" type="text" name="text_input" value="" placeholder="Enter some text">',
-            response.content)
+        self.assertIn(b'<p><label for="id_text_input">Text input:</label> <input type="text" name="text_input" '
+                      b'required id="id_text_input"></p>', response.content)
+        self.assertIn(b'<label for="id_password_input">Password input:</label> <input type="password" '
+                      b'name="password_input" required id="id_password_input"></p>', response.content)
+        self.assertIn(b'<p><label for="id_checkbox_on">Checkbox on:</label> <input type="checkbox" '
+                      b'name="checkbox_on" required id="id_checkbox_on"></p>', response.content)
 
-        self.assertIn(b'<label for="id_password_input">Password Input</label><br>', response.content)
-        self.assertIn(
-            b'<input id="id_password_input" type="password" name="password_input" value="" '
-            b'placeholder="Your password">', response.content)
-
-        self.assertIn(
-            b'<input id="id_checkbox_input" type="checkbox" name="checkbox_on" value="Checkbox Checked" checked>',
-            response.content)
-        self.assertIn(b'<label for="id_checkbox_input">Checkbox</label>', response.content)
-
-        self.assertIn(b'<input id="id_radio_one_input" type="radio" name="radio_input" value="Value One">',
-                      response.content)
-        self.assertIn(b'<label for="id_radio_one_input">Value One</label>', response.content)
-        self.assertIn(b'<input id="id_radio_two_input" type="radio" name="radio_input" value="Value Two" checked>',
-                      response.content)
-        self.assertIn(b'<label for="id_radio_two_input">Value Two</label>', response.content)
-        self.assertIn(b'<input id="id_radio_three_input" type="radio" name="radio_input" value="Value Three">',
-                      response.content)
-        self.assertIn(b'<label for="id_radio_three_input">Value Three</label>', response.content)
-
-        self.assertIn(b'<label for="id_favorite_book">Favorite Book</label><br>', response.content)
-        self.assertIn(b'<select id="id_favorite_book" name="favorite_book">', response.content)
-        self.assertIn(b'<optgroup label="Non-Fiction">', response.content)
-        self.assertIn(b'<option value="1">Deep Learning with Keras</option>', response.content)
-        self.assertIn(b'<option value="2">The Django Workshop</option>', response.content)
-        self.assertIn(b'<optgroup label="Fiction">', response.content)
-        self.assertIn(b'<option value="3">Brave New World</option>', response.content)
-        self.assertIn(b'<option value="4">The Great Gatsby</option>', response.content)
-
-        self.assertIn(b'<label for="id_books_you_own">Books You Own</label><br>', response.content)
-        self.assertIn(b'<select id="id_books_you_own" name="books_you_own" multiple>', response.content)
-        self.assertIn(b'<optgroup label="Non-Fiction">', response.content)
-        self.assertIn(b'<option value="1">Deep Learning with Keras</option>', response.content)
-        self.assertIn(b'<option value="2">The Django Workshop</option>', response.content)
-        self.assertIn(b'<optgroup label="Fiction">', response.content)
-        self.assertIn(b'<option value="3">Brave New World</option>', response.content)
-        self.assertIn(b'<option value="4">The Great Gatsby</option>', response.content)
-
-        self.assertIn(b'<label for="id_text_area">Text Area</label><br>', response.content)
-        self.assertIn(
-            b'<textarea name="text_area" id="id_text_area" placeholder="Enter multiple lines of text"></textarea>',
-            response.content)
-        self.assertIn(b'<label for="id_number_input">Number Input</label><br>', response.content)
-        self.assertIn(
-            b'<input id="id_number_input" type="number" name="number_input" value="" step="any" '
-            b'placeholder="A number">', response.content)
-        self.assertIn(b'<label for="id_email_input">Email Input</label><br>', response.content)
-        self.assertIn(
-            b'<input id="id_email_input" type="email" name="email_input" value="" placeholder="Your email address">',
-            response.content)
-        self.assertIn(b'<label for="id_date_input">Date Input</label><br>', response.content)
-        self.assertIn(b'<input id="id_date_input" type="date" name="date_input" value="2019-11-23">', response.content)
         self.assertIn(b'<input type="submit" name="submit_input" value="Submit Input">', response.content)
         self.assertIn(b'<button type="submit" name="button_element" value="Button Element">', response.content)
         self.assertIn(b'Button With <strong>Styled</strong> Text', response.content)
         self.assertIn(b'</button>', response.content)
-        self.assertIn(b'<input type="hidden" name="hidden_input" value="Hidden Value">', response.content)
 
     def test_method_in_view(self):
         """Test that the method is included in the HTML output"""
@@ -105,25 +58,65 @@ class Exercise4Test(TestCase):
         """Mock the print() function to test the debug output with posted data."""
         mock_request = mock.MagicMock(spec=HttpRequest)
         mock_request.method = 'POST'
-        mock_request.POST = QueryDict(b'csrfmiddlewaretoken='
-                                      b'QgK9FsIIlrh5VJrq35Y9LnlLWLxn59XzQ9gDs3zh5VS29xxFnQol4R3dWwU1wfOO&'
-                                      b'text_input=Text&password_input=Password&checkbox_on=Checkbox+Checked&'
-                                      b'radio_input=Value+Two&favorite_book=1&books_you_own=1&books_you_own=3&'
-                                      b'text_area=Text+box+text.&number_input=4.5&email_input=user%40example.com&'
-                                      b'date_input=2019-11-23&button_element=Button+Element&hidden_input=Hidden+Value')
+        mock_request.POST = QueryDict(
+            b'csrfmiddlewaretoken=I6vbozNPwTAccdT5dbxgWL4gRAX4DSkTIZ1FbaEognb9q1ZkxWXsffMIRlkI4Yb8&text_input=Some+text'
+            b'&password_input=password&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=1'
+            b'&books_you_own=4&text_area=This+is+my+text.&integer_input=10&float_input=10.5&decimal_input=11.5'
+            b'&email_input=user%40example.com&date_input=2019-12-19&hidden_input=Hidden+Value&submit_input=Submit+Input'
+        )
         mock_request.META = {}
         form_example(mock_request)
         mock_print.assert_any_call(
-            "csrfmiddlewaretoken: ['QgK9FsIIlrh5VJrq35Y9LnlLWLxn59XzQ9gDs3zh5VS29xxFnQol4R3dWwU1wfOO']")
-        mock_print.assert_any_call("text_input: ['Text']")
-        mock_print.assert_any_call("password_input: ['Password']")
-        mock_print.assert_any_call("checkbox_on: ['Checkbox Checked']")
+            "csrfmiddlewaretoken: ['I6vbozNPwTAccdT5dbxgWL4gRAX4DSkTIZ1FbaEognb9q1ZkxWXsffMIRlkI4Yb8']")
+        mock_print.assert_any_call("text_input: ['Some text']")
+        mock_print.assert_any_call("password_input: ['password']")
+        mock_print.assert_any_call("checkbox_on: ['on']")
         mock_print.assert_any_call("radio_input: ['Value Two']")
         mock_print.assert_any_call("favorite_book: ['1']")
-        mock_print.assert_any_call("books_you_own: ['1', '3']")
-        mock_print.assert_any_call("text_area: ['Text box text.']")
-        mock_print.assert_any_call("number_input: ['4.5']")
+        mock_print.assert_any_call("books_you_own: ['1', '4']")
+        mock_print.assert_any_call("text_area: ['This is my text.']")
+        mock_print.assert_any_call("integer_input: ['10']")
+        mock_print.assert_any_call("float_input: ['10.5']")
+        mock_print.assert_any_call("decimal_input: ['11.5']")
         mock_print.assert_any_call("email_input: ['user@example.com']")
-        mock_print.assert_any_call("date_input: ['2019-11-23']")
-        mock_print.assert_any_call("button_element: ['Button Element']")
+        mock_print.assert_any_call("date_input: ['2019-12-19']")
         mock_print.assert_any_call("hidden_input: ['Hidden Value']")
+        mock_print.assert_any_call("submit_input: ['Submit Input']")
+
+    def test_example_form(self):
+        """Test that the ExampleForm class exists and has the attributes we expect."""
+        form = ExampleForm()
+        self.assertIsInstance(form.fields['text_input'], forms.CharField)
+
+        self.assertIsInstance(form.fields['password_input'], forms.CharField)
+        self.assertIsInstance(form.fields['password_input'].widget, forms.PasswordInput)
+
+        self.assertIsInstance(form.fields['checkbox_on'], forms.BooleanField)
+
+        self.assertIsInstance(form.fields['radio_input'], forms.ChoiceField)
+        self.assertIsInstance(form.fields['radio_input'].widget, forms.RadioSelect)
+        self.assertEqual(form.fields['radio_input'].choices, list(RADIO_CHOICES))
+
+        self.assertIsInstance(form.fields['favorite_book'], forms.ChoiceField)
+        self.assertEqual(form.fields['favorite_book'].choices, list(BOOK_CHOICES))
+
+        self.assertIsInstance(form.fields['books_you_own'], forms.MultipleChoiceField)
+        self.assertEqual(form.fields['books_you_own'].choices, list(BOOK_CHOICES))
+
+        self.assertIsInstance(form.fields['text_area'], forms.CharField)
+        self.assertIsInstance(form.fields['text_area'].widget, forms.Textarea)
+
+        self.assertIsInstance(form.fields['integer_input'], forms.IntegerField)
+
+        self.assertIsInstance(form.fields['float_input'], forms.FloatField)
+
+        self.assertIsInstance(form.fields['decimal_input'], forms.DecimalField)
+
+        self.assertIsInstance(form.fields['email_input'], forms.EmailField)
+
+        self.assertIsInstance(form.fields['date_input'], forms.DateField)
+        self.assertIsInstance(form.fields['date_input'].widget, forms.DateInput)
+        self.assertEqual(form.fields['date_input'].widget.input_type, 'date')
+
+        self.assertIsInstance(form.fields['hidden_input'], forms.CharField)
+        self.assertEqual(form.fields['hidden_input'].initial, 'Hidden Value')

@@ -1,86 +1,136 @@
-import os
-from unittest import mock
+import re
 
-from PIL import Image
-from django import forms
-from django.conf import settings
-from django.test import TestCase, Client
-from django.utils import timezone
-from reviews.forms import BookMediaForm
-from reviews.models import Book, Publisher
-from reviews.views import book_media
+from django.test import Client
+from django.test import TestCase
+
+from reviews.models import Publisher
 
 
 class Activity1Test(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        p = Publisher.objects.create(name='Test Publisher')
-        Book.objects.create(title='Test Book', publication_date=timezone.now(), publisher=p)
-
-    def test_form_definition(self):
-        """Test that the BookMediaForm has the correct field."""
-        f = BookMediaForm()
-        self.assertEquals(f.Meta.model, Book)
-        self.assertEquals(f.Meta.fields, ['cover', 'sample'])
-        self.assertIsInstance(f.fields['cover'], forms.ImageField)
-        self.assertIsInstance(f.fields['sample'], forms.FileField)
-
-    def test_form_in_template(self):
-        """Test that the form is in the rendered template."""
+    def test_container_wrapper(self):
+        """The <div class="container-fluid"> should have been added."""
         c = Client()
-        resp = c.get('/books/1/media/')
-        self.assertEquals(resp.status_code, 200)
-        self.assertIn(b'<label for="id_sample">Sample:</label>', resp.content)
-        self.assertIn(b'<label for="id_cover">Cover:</label>', resp.content)
-        self.assertIn(b'<input type="file" name="cover" accept="image/*" id="id_cover">',
-                      resp.content)
-        self.assertIn(b'<input type="file" name="sample" id="id_sample">',
-                      resp.content)
+        resp = c.get('/')
+        self.assertIn(b'<div class="container-fluid">', resp.content)
 
-    @mock.patch('reviews.views.render', name='render')
-    @mock.patch('reviews.views.get_object_or_404', name='get_object_or_404')
-    def test_render_call(self, mock_g_o_o_404, mock_render):
-        """Test that the view calls render with the correct arguments and returns it."""
-        request = mock.MagicMock(name='request')
-        resp = book_media(request, 'pk')
-
-        mock_g_o_o_404.assert_called_with(Book, pk='pk')
-        self.assertEquals(resp, mock_render.return_value)
-        self.assertEquals(mock_render.call_args[0][0], request)
-        self.assertEquals(mock_render.call_args[0][1], 'reviews/instance-form.html')
-        self.assertIsInstance(mock_render.call_args[0][2], dict)
-        self.assertEquals(len(mock_render.call_args[0][2]), 4)
-        self.assertIsInstance(mock_render.call_args[0][2]['form'], BookMediaForm)
-        self.assertEquals(mock_render.call_args[0][2]['instance'], mock_g_o_o_404.return_value)
-        self.assertEquals(mock_render.call_args[0][2]['model_type'], 'Book')
-        self.assertEquals(mock_render.call_args[0][2]['is_file_upload'], True)
-
-    def test_book_media_upload(self):
+    def test_fields_in_view(self):
+        """"
+        Test that fields exist in the rendered template.
         """
-        Test the upload functionality to the book_media view. Check it exists on disk and the image has been resized.
+        c = Client()
+        response = c.get('/publishers/new/')
+
+        self.assertIsNotNone(re.search(r'<input type="hidden" name="csrfmiddlewaretoken" value="\w+">',
+                                       response.content.decode('utf8')))
+
+        self.assertIn(
+            b'<label for="id_name">Name:</label> <input type="text" name="name" maxlength="50" required id="id_name"> '
+            b'<span class="helptext">The name of the Publisher.</span></p>',
+            response.content)
+        self.assertIn(
+            b'<label for="id_website">Website:</label> <input type="url" name="website" maxlength="200" '
+            b'required id="id_website"> <span class="helptext">The Publisher\'s website.</span></p>',
+            response.content)
+        self.assertIn(
+            b'<label for="id_email">Email:</label> <input type="email" name="email" maxlength="254" '
+            b'required id="id_email"> <span class="helptext">The Publisher\'s email address.</span>',
+            response.content)
+        self.assertIn(b'<button type="submit" class="btn btn-primary">\n        Create\n    </button>',
+                      response.content)
+
+    def test_publisher_create(self):
+        """Test the creation of a new Publisher"""
+        self.assertEqual(Publisher.objects.all().count(), 0)
+        c = Client()
+        publisher_name = 'Test Create Publisher'
+        publisher_website = 'http://www.example.com/test-publisher/'
+        publisher_email = 'test-publisher@example.com'
+
+        response = c.post('/publishers/new/', {
+            'name': publisher_name,
+            'website': publisher_website,
+            'email': publisher_email
+        })
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Publisher.objects.all().count(), 1)
+        publisher = Publisher.objects.first()
+        self.assertEqual(publisher.name, publisher_name)
+        self.assertEqual(publisher.website, publisher_website)
+        self.assertEqual(publisher.email, publisher_email)
+        self.assertEqual(response['Location'], '/publishers/{}/'.format(publisher.pk))
+
+        # the messages will be on the redirected to page
+        response = c.get(response['location'])
+
+        condensed_content = re.sub(r'\s+', ' ', response.content.decode('utf8').replace('\n', ''))
+
+        self.assertIn(
+            '<div class="alert alert-success" role="alert"> Publisher &quot;Test Create Publisher&quot; was created. '
+            '</div>', condensed_content)
+
+    def test_publisher_no_create(self):
+        """Test that no Publisher is created if the form is invalid."""
+        self.assertEqual(Publisher.objects.all().count(), 0)
+        c = Client()
+
+        response = c.post('/publishers/new/', {
+            'name': '',
+            'website': 'not a url',
+            'email': 'not an email'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Publisher.objects.all().count(), 0)
+
+    def test_publisher_edit(self):
         """
-        cover_filename = 'machine-learning-for-algorithmic-trading.png'
-        cover_save_path = os.path.join(settings.MEDIA_ROOT, 'book_covers', cover_filename)
+        Test editing a publisher, the initial GET should have a form with values and then the post should update the
+        Publisher rather than creating a new one.
+        """
+        publisher_name = 'Test Edit Publisher'
+        publisher_website = 'http://www.example.com/edit-publisher/'
+        publisher_email = 'edit-publisher@example.com'
+        publisher = Publisher(name=publisher_name, website=publisher_website, email=publisher_email)
+        publisher.save()
+        self.assertEqual(Publisher.objects.all().count(), 1)
 
-        sample_filename = 'machine-learning-for-trading.pdf'
-        sample_save_path = os.path.join(settings.MEDIA_ROOT, 'book_samples', sample_filename)
+        c = Client()
 
-        try:
-            c = Client()
-            with open(os.path.join(settings.BASE_DIR, 'fixtures', cover_filename), 'rb') as cover_fp:
-                with open(os.path.join(settings.BASE_DIR, 'fixtures', sample_filename), 'rb') as sample_fp:
-                    resp = c.post('/books/1/media/', {'cover': cover_fp, 'sample': sample_fp})
+        response = c.get('/publishers/{}/'.format(publisher.pk))
 
-            self.assertEquals(resp.status_code, 302)
-            self.assertEquals(resp['Location'], '/books/1/')
+        self.assertIn(b'value="Test Edit Publisher"', response.content)
+        self.assertIn(b'value="http://www.example.com/edit-publisher/"', response.content)
+        self.assertIn(b'value="edit-publisher@example.com"', response.content)
+        self.assertIn(b'<button type="submit" class="btn btn-primary">\n        Save\n    </button>',
+                      response.content)
 
-            with open(cover_save_path, 'rb') as cover_image_fp:
-                cover = Image.open(cover_image_fp)
-                self.assertTrue(cover.width == 300 or cover.height == 300)
+        response = c.post('/publishers/{}/'.format(publisher.pk), {
+            'name': 'Updated Name',
+            'website': 'https://www.example.com/updated/',
+            'email': 'updated@example.com'
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Publisher.objects.all().count(), 1)
+        publisher2 = Publisher.objects.first()
 
-        finally:
-            if os.path.exists(cover_save_path):
-                os.unlink(cover_save_path)
+        self.assertEqual(publisher2.pk, publisher.pk)
+        self.assertEqual(publisher2.name, 'Updated Name')
+        self.assertEqual(publisher2.website, 'https://www.example.com/updated/')
+        self.assertEqual(publisher2.email, 'updated@example.com')
 
-            if os.path.exists(sample_save_path):
-                os.unlink(sample_save_path)
+        # the messages will be on the redirected to page
+
+        response = c.get(response['location'])
+
+        condensed_content = re.sub(r'\s+', ' ', response.content.decode('utf8').replace('\n', ''))
+
+        self.assertIn(
+            '<div class="alert alert-success" role="alert"> Publisher &quot;Updated Name&quot; was updated. </div>',
+            condensed_content)
+
+    def test_404_response(self):
+        """When getting a Publisher that doesn't exist we should get a 404 response."""
+        c = Client()
+        response = c.get('/publishers/123/')
+        self.assertEquals(response.status_code, 404)

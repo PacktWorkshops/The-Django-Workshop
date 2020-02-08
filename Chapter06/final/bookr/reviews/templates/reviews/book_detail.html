@@ -18,7 +18,6 @@
             <br>
             <hr>
             <h3>Review Comments</h3>
-            <ul>
             {% for review in reviews %}
                   <li class="list-group-item">
                         <span class="text-info">Review comment: </span> <span>{{ review.content }}</span>
@@ -31,10 +30,7 @@
                         <br>
                         <span class="text-info">Creator: </span><span>{{ review.creator.username }}</span>
                         <br>
-                        <a href="{% url 'review_edit' book.pk review.pk %}">Edit Review</a>
                   </li>
             {% endfor %}
-            </ul>
       {% endif %}
-      <a class="btn btn-primary" href="{% url 'review_create' book.pk %}">Add Review</a>
 {% endblock %}

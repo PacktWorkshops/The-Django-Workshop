@@ -53,7 +53,12 @@ def book_detail(request, pk):
 
 
 def form_example(request):
-    for name in request.POST:
-        print("{}: {}".format(name, request.POST.getlist(name)))
-    form = ExampleForm()
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            for name, value in form.cleaned_data.items():
+                print("{}: ({}) {}".format(name, type(value), value))
+    else:
+        form = ExampleForm()
+
     return render(request, "form-example.html", {"method": request.method, "form": form})

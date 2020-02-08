@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', reviews.views.index),
     path('book-search/', reviews.views.book_search, name='book_search'),
-    path('', include('reviews.urls'))
+    path('', include('reviews.urls')),
+    path('form-example/', reviews.views.form_example)
 ]

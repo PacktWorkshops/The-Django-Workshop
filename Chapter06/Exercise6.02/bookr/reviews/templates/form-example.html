@@ -6,6 +6,7 @@
 </head>
 <body>
 <form method="post">
+    {% csrf_token %}
     <p>
         <label for="id_text_input">Text Input</label><br>
         <input id="id_text_input" type="text" name="text_input" value="" placeholder="Enter some text">
@@ -77,6 +78,7 @@
         </button>
     </p>
     <input type="hidden" name="hidden_input" value="Hidden Value">
+
 </form>
 </body>
 </html>

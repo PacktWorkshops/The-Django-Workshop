@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+    <h4>Method: {{ method }}</h4>
 <form method="post">
     {% csrf_token %}
     <p>
@@ -78,6 +79,7 @@
         </button>
     </p>
     <input type="hidden" name="hidden_input" value="Hidden Value">
+
 </form>
 </body>
 </html>
