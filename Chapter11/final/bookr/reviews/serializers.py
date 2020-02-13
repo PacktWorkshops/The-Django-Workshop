@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 
 from .models import Book, Publisher, Review
 from .utils import average_rating
@@ -19,14 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'email']
 
 
-class ReviewsSerializer(serializers.ModelSerializer):
-    creator = UserSerializer()
-
-    class Meta:
-        model = Review
-        fields = ['content', 'date_created', 'date_edited', 'rating', 'creator']
-
-
 class BookSerializer(serializers.ModelSerializer):
     publisher = PublisherSerializer()
     rating = serializers.SerializerMethodField('book_rating')
@@ -42,10 +36,39 @@ class BookSerializer(serializers.ModelSerializer):
     def book_reviews(self, book):
         reviews = book.review_set.all()
         if reviews:
-            return ReviewsSerializer(reviews, many=True).data
+            return ReviewSerializer(reviews, many=True).data
         else:
             None
 
     class Meta:
         model = Book
         fields = ['title', 'publication_date', 'isbn', 'publisher', 'rating', 'reviews']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(read_only=True)
+    book = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ['pk', 'content', 'date_created', 'date_edited', 'rating', 'creator', 'book', 'book_id']
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        creator = request.user
+        if not creator.is_authenticated:
+            raise NotAuthenticated('Authentication required.')
+        book = Book.objects.get(pk=request.data['book_id'])
+        return Review.objects.create(content=validated_data['content'], book=book, creator=creator,
+                                     rating=validated_data['rating'])
+
+    def update(self, instance, validated_data):
+        request = self.context['request']
+        creator = request.user
+        if not creator.is_authenticated or instance.creator_id != creator.pk:
+            raise PermissionDenied('Permission denied, you are not the creator of this review')
+        instance.content = validated_data['content']
+        instance.rating = validated_data['rating']
+        instance.date_edited = timezone.now()
+        instance.save()
+        return instance
