@@ -11,7 +11,7 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Publisher
-        fields = ['name', 'website', 'email']
+        fields = ['pk', 'name', 'website', 'email']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,19 +30,15 @@ class BookSerializer(serializers.ModelSerializer):
         reviews = book.review_set.all()
         if reviews:
             return average_rating([review.rating for review in reviews])
-        else:
-            None
 
     def book_reviews(self, book):
         reviews = book.review_set.all()
         if reviews:
             return ReviewSerializer(reviews, many=True).data
-        else:
-            None
 
     class Meta:
         model = Book
-        fields = ['title', 'publication_date', 'isbn', 'publisher', 'rating', 'reviews']
+        fields = ['pk', 'title', 'publication_date', 'isbn', 'publisher', 'rating', 'reviews']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -54,7 +50,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['pk', 'content', 'date_created', 'date_edited', 'rating', 'creator', 'book', 'book_id']
 
     def create(self, validated_data):
-        request = self.context["request"]
+        request = self.context['request']
         creator = request.user
         if not creator.is_authenticated:
             raise NotAuthenticated('Authentication required.')
