@@ -4,7 +4,7 @@ from .models import Book, Review
 from .utils import average_rating
 
 
-def books_list(request):
+def book_list(request):
     books = Book.objects.all()
     book_list = []
     for book in books:
