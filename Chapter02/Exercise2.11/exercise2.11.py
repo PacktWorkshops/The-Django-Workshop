@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from reviews.models import Book
+from reviews.models import Contributor
 
-book = Book.objects.get(title='The Talisman')
-
-book.contributors.all()
+Contributor.objects.filter(book__title='The Talisman')

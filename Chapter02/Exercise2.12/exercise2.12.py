@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from reviews.models import Contributor
+from reviews.models import Book
 
-contributor = Contributor.objects.get(first_names='Rowel')
+book = Book.objects.get(title='The Talisman')
 
-contributor.book_set.all()
+book.contributors.all()

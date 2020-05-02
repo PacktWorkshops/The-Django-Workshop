@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-from reviews.models import Contributor
+from reviews.models import Publisher
 
-Contributor.objects.create(first_names='Peter', last_names='Wharton', email='PeterWharton@example.com')
-Contributor.objects.create(first_names='Peter', last_names='Tyrrell', email='PeterTyrrell@example.com')
-contributors = Contributor.objects.filter(first_names='Peter')
-print(contributors)
-
+publisher = Publisher.objects.get(name='Pocket Books')
+print(publisher.name)
+print(publisher.website)
+print(publisher.email)

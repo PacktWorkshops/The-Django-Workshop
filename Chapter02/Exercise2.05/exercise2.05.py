@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
-from reviews.models import Book, Contributor
+from datetime import date
+from reviews.models import Book, Publisher
 
-contributor = Contributor.objects.create(first_names='Packt', last_names='Example Editor', email='PacktEditor@example.com')
-book = Book.objects.get(title="Advanced Deep Learning with Keras")
-book.contributors.add(contributor, through_defaults={'role': 'EDITOR'})
+publisher = Publisher.objects.get(name='Packt Publishing')
+
+book = Book.objects.create(title='Advanced Deep Learning with Keras', publication_date=date(2018, 10, 31),
+                           isbn='9781788629416', publisher=publisher)
+print(book)
