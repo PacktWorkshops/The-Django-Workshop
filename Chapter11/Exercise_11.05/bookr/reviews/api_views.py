@@ -1,14 +1,15 @@
 from django.contrib.auth import authenticate
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
 from rest_framework.views import APIView
 
-from .models import Book
-from .serializers import BookSerializer
+from .models import Book, Review
+from .serializers import BookSerializer, ReviewSerializer
 
 
 class Login(APIView):
@@ -24,6 +25,12 @@ class Login(APIView):
 class BookViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    authentication_classes = [TokenAuthentication]
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.order_by('-date_created')
+    serializer_class = ReviewSerializer
+    pagination_class = LimitOffsetPagination
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
 

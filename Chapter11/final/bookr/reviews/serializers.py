@@ -52,8 +52,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context['request']
         creator = request.user
-        if not creator.is_authenticated:
-            raise NotAuthenticated('Authentication required.')
         book = Book.objects.get(pk=request.data['book_id'])
         return Review.objects.create(content=validated_data['content'], book=book, creator=creator,
                                      rating=validated_data['rating'])
@@ -61,10 +59,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         request = self.context['request']
         creator = request.user
-        if not creator.is_authenticated or instance.creator_id != creator.pk:
+        if instance.creator_id != creator.pk:
             raise PermissionDenied('Permission denied, you are not the creator of this review')
         instance.content = validated_data['content']
         instance.rating = validated_data['rating']
         instance.date_edited = timezone.now()
         instance.save()
         return instance
+
