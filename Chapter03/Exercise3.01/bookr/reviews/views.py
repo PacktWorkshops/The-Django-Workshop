@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 
 
-def hello_world(request):
-    message = "<html><h1>Hello World!</h1></html>"
+def welcome_view(request):
+    message = "<html><h1>Welcome to Bookr!</h1></html>"
     return HttpResponse(message)
