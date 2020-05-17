@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from .forms import SearchForm
+from .forms import ExampleForm, SearchForm
 from .models import Book, Contributor
 from .utils import average_rating
 
@@ -20,9 +20,17 @@ def book_search(request):
         if search_in == "title":
             books = Book.objects.filter(title__icontains=search)
         else:
-            contributors = Contributor.objects.filter(first_names__icontains=search) | \
-                           Contributor.objects.filter(last_names__icontains=search)
-            for contributor in contributors:
+            fname_contributors = \
+                Contributor.objects.filter(first_names__icontains=search)
+
+            for contributor in fname_contributors:
+                for book in contributor.book_set.all():
+                    books.add(book)
+
+            lname_contributors = \
+                Contributor.objects.filter(last_names__icontains=search)
+
+            for contributor in lname_contributors:
                 for book in contributor.book_set.all():
                     books.add(book)
 
@@ -65,3 +73,15 @@ def book_detail(request, pk):
             "reviews": None
         }
     return render(request, "reviews/book_detail.html", context)
+
+
+def form_example(request):
+    if request.method == "POST":
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            for name, value in form.cleaned_data.items():
+                print("{}: ({}) {}".format(name, type(value), value))
+    else:
+        form = ExampleForm()
+
+    return render(request, "form-example.html", {"method": request.method, "form": form})
