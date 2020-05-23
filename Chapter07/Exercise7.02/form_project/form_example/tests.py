@@ -5,11 +5,11 @@ from django.http import HttpRequest, QueryDict
 from django.test import Client
 from django.test import TestCase
 
-from reviews.forms import OrderForm
-from reviews.views import form_example
+from form_example.forms import OrderForm
+from form_example.views import form_example
 
 
-class Exercise1Test(TestCase):
+class Exercise2Test(TestCase):
     def test_fields_in_view(self):
         """"
         Test that some fields exist in the rendered template, assume that if all the fields exist on the form class
@@ -22,13 +22,16 @@ class Exercise1Test(TestCase):
                                        response.content.decode('ascii')))
 
         self.assertIn(b'<p><label for="id_magazine_count">Magazine count:</label> <input type="number" '
-                      b'name="magazine_count" min="0" max="80" required id="id_magazine_count"></p>', response.content)
+                      b'name="magazine_count" placeholder="Number of Magazines" min="0" max="80" required '
+                      b'id="id_magazine_count"></p>', response.content)
         self.assertIn(b'<p><label for="id_book_count">Book count:</label> <input type="number" name="book_count" '
-                      b'min="0" max="50" required id="id_book_count"></p>', response.content)
+                      b'placeholder="Number of Books" min="0" max="50" required id="id_book_count"></p>',
+                      response.content)
         self.assertIn(b'<p><label for="id_send_confirmation">Send confirmation:</label> <input type="checkbox" '
                       b'name="send_confirmation" id="id_send_confirmation"></p>', response.content)
         self.assertIn(
-            b'<p><label for="id_email">Email:</label> <input type="email" name="email" id="id_email"></p>',
+            b'<p><label for="id_email">Email:</label> <input type="email" name="email" value="user@example.com" '
+            b'placeholder="Your company email address" id="id_email"></p>',
             response.content)
 
         self.assertIn(b'<input type="submit" name="submit_input" value="Submit Input">', response.content)
@@ -45,8 +48,8 @@ class Exercise1Test(TestCase):
         response = c.post('/form-example/')
         self.assertIn(b'<h4>Method: POST</h4>', response.content)
 
-    @mock.patch('reviews.views.print')
-    @mock.patch('reviews.views.OrderForm')
+    @mock.patch('form_example.views.print')
+    @mock.patch('form_example.views.OrderForm')
     def test_get_debug_output(self, mock_example_form, mock_print):
         """Mock the print() function to test the debug output with GET request (no output)."""
         mock_request = mock.MagicMock(spec=HttpRequest)
@@ -54,10 +57,10 @@ class Exercise1Test(TestCase):
         mock_request.POST = QueryDict()
         mock_request.META = {}
         form_example(mock_request)
-        mock_example_form.assert_called_with()
+        mock_example_form.assert_called_with(initial={"email": "user@example.com"})
         mock_print.assert_not_called()
 
-    @mock.patch('reviews.views.print')
+    @mock.patch('form_example.views.print')
     def test_post_debug_output(self, mock_print):
         """Mock the print() function to test the debug output with posted data."""
         mock_request = mock.MagicMock(spec=HttpRequest)

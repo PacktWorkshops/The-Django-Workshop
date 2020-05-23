@@ -29,19 +29,7 @@ class Exercise3Test(TestCase):
             b'<label for="id_email">Email:</label> <input type="email" name="email" maxlength="254" '
             b'required id="id_email"> <span class="helptext">The Publisher\'s email address.</span>',
             response.content)
-        self.assertIn(b'<input type="submit" name="submit_input" value="Submit Input">', response.content)
-        self.assertIn(b'<button type="submit" name="button_element" value="Button Element">', response.content)
-        self.assertIn(b'Button With <strong>Styled</strong> Text', response.content)
-        self.assertIn(b'</button>', response.content)
-
-    def test_method_in_view(self):
-        """Test that the method is included in the HTML output"""
-        c = Client()
-        response = c.get('/publishers/new/')
-        self.assertIn(b'<h4>Method: GET</h4>', response.content)
-
-        response = c.post('/publishers/new/')
-        self.assertIn(b'<h4>Method: POST</h4>', response.content)
+        self.assertIn(b'<input type="submit" value="Submit">', response.content)
 
     def test_publisher_create(self):
         """Test the creation of a new Publisher"""

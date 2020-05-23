@@ -8,19 +8,12 @@
 {% for message in messages %}
 <p><em>{{ message.level_tag|title }}:</em> {{ message }}</p>
 {% endfor %}
-<h4>Method: {{ method }}</h4>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <p>
-        <input type="submit" name="submit_input" value="Submit Input">
-    </p>
-    <p>
-        <button type="submit" name="button_element" value="Button Element">
-            Button With <strong>Styled</strong> Text
-        </button>
+        <input type="submit" value="Submit">
     </p>
 </form>
-
 </body>
 </html>
