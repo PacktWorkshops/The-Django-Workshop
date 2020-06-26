@@ -1,5 +1,3 @@
-'use strict';
-
 const e = React.createElement;
 
 class ClickCounter extends React.Component {

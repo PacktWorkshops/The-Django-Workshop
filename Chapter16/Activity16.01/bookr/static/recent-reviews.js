@@ -1,5 +1,3 @@
-'use strict';
-
 class ReviewDisplay extends React.Component {
     constructor(props) {
         super(props);

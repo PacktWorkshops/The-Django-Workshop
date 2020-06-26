@@ -1,5 +1,3 @@
-'use strict';
-
 class ClickCounter extends React.Component {
   constructor(props) {
     super(props);

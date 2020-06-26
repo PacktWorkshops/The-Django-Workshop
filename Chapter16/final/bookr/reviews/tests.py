@@ -57,8 +57,6 @@ class Activity1Test(TestCase):
         s = re.sub(r'^\s+', '', static_content, flags=re.MULTILINE)
         s = re.sub(r'\s+$', '', s, flags=re.MULTILINE)
 
-        self.assertIn("'use strict';", s)
-
         review_display_class = """class ReviewDisplay extends React.Component {
 constructor(props) {
 super(props);

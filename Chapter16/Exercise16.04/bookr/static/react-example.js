@@ -1,5 +1,3 @@
-'use strict';
-
 class BookDisplay extends React.Component {
   constructor(props) {
     super(props);
