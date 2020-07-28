@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/bin/python3.7",
+    "python.autoComplete.extraPaths": ["./"]
+}
