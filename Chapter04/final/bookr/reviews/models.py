@@ -12,6 +12,7 @@ class Publisher(models.Model):
     def __str__(self):
         return self.name
 
+
 class Book(models.Model):
     """A published book."""
     title = models.CharField(max_length=70,
@@ -28,6 +29,12 @@ class Book(models.Model):
     def __str__(self):
         return "{} ({})".format(self.title, self.isbn)
 
+    def isbn13(self):
+        """ '9780316769174' => '978-0-31-676917-4' """
+        return "{}-{}-{}-{}-{}".format(self.isbn[0:3], self.isbn[3:4],
+                                       self.isbn[4:6], self.isbn[6:12],
+                                       self.isbn[12:13])
+
 
 class Contributor(models.Model):
     """A contributor to a Book, e.g. author, editor, co-author."""
@@ -38,13 +45,15 @@ class Contributor(models.Model):
     email = models.EmailField(help_text="The contact email for the contributor.")
 
     def initialled_name(self):
-        """ obj.first_names='Jerome David', obj.last_names='Salinger'
+        """ self.first_names='Jerome David', self.last_names='Salinger'
             => 'Salinger, JD' """
-        initials = ''.join([name[0] for name in self.first_names.split(' ')])
+        initials = ''.join([name[0] for name
+                            in self.first_names.split(' ')])
         return "{}, {}".format(self.last_names, initials)
 
     def __str__(self):
         return self.initialled_name()
+
 
 class BookContributor(models.Model):
     class ContributionRole(models.TextChoices):
@@ -57,8 +66,6 @@ class BookContributor(models.Model):
     role = models.CharField(verbose_name="The role this contributor had in the book.",
                             choices=ContributionRole.choices, max_length=20)
 
-    def __str__(self):
-        return "{} ({})".format(self.contributor, self.role)
 
 class Review(models.Model):
     content = models.TextField(help_text="The Review text.")
@@ -71,6 +78,3 @@ class Review(models.Model):
     creator = models.ForeignKey(auth.get_user_model(), on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE,
                              help_text="The Book that this review is for.")
-
-    def __str__(self):
-        return "{}: {}".format(self.creator.name, self.book.title)
