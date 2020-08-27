@@ -12,10 +12,7 @@ from .utils import average_rating
 
 
 def index(request):
-    today = str(timezone.now().date())
-    last_visit = request.session.get("last_visit")
-    request.session["last_visit"] = today
-    return render(request, "base.html", {"returning_today": last_visit == today})
+    return render(request, "base.html")
 
 
 def book_search(request):
