@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from reviews.models import Publisher
+from reviews.models import Contributor
 
-publisher = Publisher.objects.get(name='Pocket Books')
-print(publisher.name)
-print(publisher.website)
-print(publisher.email)
+contributors = Contributor.objects.all()
+print(contributors)
+print(contributors[0])
+print(contributors[0].first_names)
+print(contributors[0].last_names)

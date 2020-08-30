@@ -2,6 +2,8 @@
 
 from reviews.models import Contributor
 
-contributor = Contributor.objects.get(first_names='Rowel')
 
-contributor.book_set.all()
+Contributor.objects.filter(last_names='Tyrrell').update(first_names='Mike')
+
+
+Contributor.objects.get(last_names='Tyrrell').first_names

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from reviews.models import Book, BookContributor, Contributor
+from reviews.models import Book, Contributor
 
-contributor = Contributor.objects.get(first_names='Rowel')
-book = Book.objects.get(title='Advanced Deep Learning with Keras')
-book_contributor = BookContributor(book=book, contributor=contributor, role='AUTHOR')
-book_contributor.save()
+contributor = Contributor.objects.create(first_names='Packt', last_names='Example Editor', email='PacktEditor@example.com')
+book = Book.objects.get(title="Advanced Deep Learning with Keras")
+book.contributors.add(contributor, through_defaults={'role': 'EDITOR'})

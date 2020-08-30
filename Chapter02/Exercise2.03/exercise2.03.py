@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
-from reviews.models import Publisher
+from reviews.models import Contributor
 
-publisher = Publisher(name='Packt Publishing', website='https://www.packtpub.com', email='info@packtpub.com')
-publisher.save()
-print(publisher.email)
-publisher.email = 'customersupport@packtpub.com'
-publisher.save()
-print(publisher.email)
+contributor = Contributor.objects.create(first_names='Rowel', last_names='Atienza', email='RowelAtienza@example.com')
+print(contributor.email)
+print(contributor.first_names)

@@ -2,8 +2,10 @@
 
 from reviews.models import Contributor
 
-contributors = Contributor.objects.all()
+Contributor.objects.create(first_names='Peter', last_names='Wharton', email='PeterWharton@example.com')
+Contributor.objects.create(first_names='Peter', last_names='Tyrrell', email='PeterTyrrell@example.com')
+contributors = Contributor.objects.filter(first_names='Peter')
 print(contributors)
-print(contributors[0])
-print(contributors[0].first_names)
-print(contributors[0].last_names)
+Contributor.objects.filter(first_names='Rowel')
+Contributor.objects.filter(first_names='Nobody')
+
