@@ -46,7 +46,7 @@ class Exercise3Test(StaticLiveServerTestCase):
         In the index HTML we should see: {% load static %}, CSS loaded with {% static %} template tag and no
         <style>...</style> tags.
         """
-        base_template = read_content(os.path.join(settings.BASE_DIR, 'landing', 'templates', 'landing', 'index.html'))
+        base_template = read_content(os.path.join(settings.BASE_DIR, 'templates', 'index.html'))
         self.assertIn('{% load static %}', base_template)
         self.assertIn('<link rel="stylesheet" href="{% static \'main.css\' %}">', base_template)
         self.assertNotIn('<style>', base_template)

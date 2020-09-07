@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville|Source+Sans+Pro&display=swap">
+
+    <title>Bookr</title>
     <link rel="stylesheet" href="{% static 'main.css' %}">
-    <title>Book Review</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Libre+Baskerville|Source+Sans+Pro&display=swap">
   </head>
   <body>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
@@ -23,7 +24,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/books/">Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Logout</a>
@@ -36,13 +37,14 @@
           </div>
         </nav>
         {% block content %}
+        <h1>Welcome to Bookr!</h1>
         {% endblock %}
   <!-- Copyright -->
   <footer class="page-footer font-small blue">
     <div class="footer-copyright text-center py-3">© 2020 Copyright:
       <a href="https://www.packtpub.com"> Packt Publications</a>
       <p>Website by: Packt Publications</p>
-      <p>Contact information: <a href="mailto:emailexample@email.com">emailexample@email.com</a></p>
+      <p>Contact information: <a href="mailto:email@example.com">email@example.comm</a></p>
     </div>
   </footer>
   <!-- Copyright -->

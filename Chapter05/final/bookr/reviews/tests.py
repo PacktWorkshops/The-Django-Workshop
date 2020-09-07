@@ -11,7 +11,7 @@ def read_content(path):
         return f.read()
 
 
-class Activity1Test(StaticLiveServerTestCase):
+class Activity3Test(StaticLiveServerTestCase):
     """
     These tests use `StaticLiveServerTestCase` and `urlopen` since the normal `TestCase` uses a special server that does
     not serve static assets.
