@@ -152,7 +152,7 @@ class Activity1Test(TestCase):
 
         self.assertIn('<title>Search Results for "keras"</title>', re.sub('\n\s*', '', resp.content.decode('utf8')))
         self.assertIn(b'<h3>Search Results for <em>keras</em></h3>', resp.content)
-        self.assertIn(b'<a href="/books/1/">Advanced Deep Learning with Keras</a>', resp.content)
+        self.assertIn(b'<a href="/books/1/">Advanced Deep Learning with Keras (9781788629416)</a>', resp.content)
         self.assertIn(b'<span class="text-info">Contributors: </span>', resp.content)
         self.assertIn(b'Rowel Atienza', resp.content)
 

@@ -17,12 +17,12 @@
 <ul class="list-group">
     {% for book in books %}
     <li class="list-group-item">
-    <span class="text-info">Title: </span> <a href="{% url 'book_detail' book.pk %}">{{ book }}</a>
-    <br/>
-    <span class="text-info">Contributors: </span>
-    {% for contributor in book.contributors.all %}
-    {{ contributor.first_names }} {{ contributor.last_names }}{% if not forloop.last %}, {% endif %}
-    {% endfor %}
+        <span class="text-info">Title: </span> <a href="{% url 'book_detail' book.pk %}">{{ book }}</a>
+        <br/>
+        <span class="text-info">Contributors: </span>
+        {% for contributor in book.contributors.all %}
+            {{ contributor.first_names }} {{ contributor.last_names }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
     </li>
     {% empty %}
         <li class="list-group-item">No results found.</li>
@@ -30,6 +30,3 @@
 </ul>
 {% endif %}
 {% endblock %}
-
-
-
