@@ -1,10 +1,10 @@
 {% extends 'reviews/base.html' %}
 {% block title %}
-    {% if instance %}
-        Editing {{ model_type }} {{ instance }}
-    {% else %}
-        New {{ model_type }}
-    {% endif %}
+{% if instance %}
+    Editing {{ model_type }} {{ instance }}
+{% else %}
+    New {{ model_type }}
+{% endif %}
 {% endblock %}
 
 {% block content %}

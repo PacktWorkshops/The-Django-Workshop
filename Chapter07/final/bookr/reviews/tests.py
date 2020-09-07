@@ -9,13 +9,13 @@ from reviews.forms import ReviewForm
 from reviews.models import Publisher, Book, Review
 
 
-class Activity1Test(TestCase):
+class Activity2Test(TestCase):
     def setUp(self):
         publisher_name = 'Test Edit Publisher'
         publisher_website = 'http://www.example.com/edit-publisher/'
         publisher_email = 'edit-publisher@example.com'
         self.publisher = Publisher.objects.create(name=publisher_name, website=publisher_website, email=publisher_email)
-        Book.objects.create(title='Test Book', publication_date=timezone.now(), publisher=self.publisher)
+        Book.objects.create(title='Test Book', publication_date=timezone.now(), publisher=self.publisher, isbn=123456)
 
         User.objects.create(username='testuser', email='testuser@example.com')
         User.objects.create(username='testuser2', email='testuser2@example.com')
@@ -54,7 +54,7 @@ class Activity1Test(TestCase):
         self.assertIn(b'<button type="submit" class="btn btn-primary">\n        Create\n    </button>',
                       response.content)
 
-        self.assertIn(b'<p>For Book <em>Test Book</em></p>', response.content)
+        self.assertIn(b'<p>For Book <em>Test Book (123456)</em></p>', response.content)
 
     def test_review_create(self):
         """Test review creation through the ReviewForm"""
@@ -81,7 +81,7 @@ class Activity1Test(TestCase):
         condensed_content = re.sub(r'\s+', ' ', response.content.decode('utf8').replace('\n', ''))
 
         self.assertIn(
-            '<div class="alert alert-success" role="alert"> Review for &quot;Test Book&quot; created. </div>',
+            '<div class="alert alert-success" role="alert"> Review for &quot;Test Book (123456)&quot; created. </div>',
             condensed_content)
 
     def test_review_no_create(self):
@@ -147,7 +147,7 @@ class Activity1Test(TestCase):
         condensed_content = re.sub(r'\s+', ' ', response.content.decode('utf8').replace('\n', ''))
 
         self.assertIn(
-            '<div class="alert alert-success" role="alert"> Review for &quot;Test Book&quot; updated. </div>',
+            '<div class="alert alert-success" role="alert"> Review for &quot;Test Book (123456)&quot; updated. </div>',
             condensed_content)
 
     def test_404_responses(self):

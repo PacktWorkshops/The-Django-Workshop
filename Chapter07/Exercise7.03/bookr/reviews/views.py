@@ -14,18 +14,27 @@ def book_search(request):
     search_text = request.GET.get("search", "")
     form = SearchForm(request.GET)
     books = set()
-
     if form.is_valid() and form.cleaned_data["search"]:
         search = form.cleaned_data["search"]
         search_in = form.cleaned_data.get("search_in") or "title"
         if search_in == "title":
             books = Book.objects.filter(title__icontains=search)
+        if search_in == "title":
+            books = Book.objects.filter(title__icontains=search)
         else:
-            contributors = Contributor.objects.filter(first_names__icontains=search) | \
-                           Contributor.objects.filter(last_names__icontains=search)
-            for contributor in contributors:
+            fname_contributors = \
+                Contributor.objects.filter(first_names__icontains=search)
+
+            for contributor in fname_contributors:
                 for book in contributor.book_set.all():
                     books.add(book)
+
+        lname_contributors = \
+            Contributor.objects.filter(last_names__icontains=search)
+
+        for contributor in lname_contributors:
+            for book in contributor.book_set.all():
+                books.add(book)
 
     return render(request, "reviews/search-results.html", {"form": form, "search_text": search_text, "books": books})
 
@@ -87,4 +96,4 @@ def publisher_edit(request, pk=None):
     else:
         form = PublisherForm(instance=publisher)
 
-    return render(request, "form-example.html", {"form": form})
+    return render(request, "form-example.html", {"method": request.method, "form": form})
