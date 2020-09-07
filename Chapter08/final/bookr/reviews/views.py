@@ -6,7 +6,7 @@ from django.core.files.images import ImageFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from .forms import PublisherForm, ReviewForm, SearchForm, BookMediaForm
+from .forms import PublisherForm, SearchForm, ReviewForm, BookMediaForm
 from .models import Book, Contributor, Publisher, Review
 from .utils import average_rating
 
@@ -18,20 +18,28 @@ def index(request):
 def book_search(request):
     search_text = request.GET.get("search", "")
     form = SearchForm(request.GET)
-
     books = set()
-
     if form.is_valid() and form.cleaned_data["search"]:
         search = form.cleaned_data["search"]
-        if form.cleaned_data["search_in"] == "title":
+        search_in = form.cleaned_data.get("search_in") or "title"
+        if search_in == "title":
+            books = Book.objects.filter(title__icontains=search)
+        if search_in == "title":
             books = Book.objects.filter(title__icontains=search)
         else:
-            contributors = Contributor.objects.filter(first_names__icontains=search) | \
-                           Contributor.objects.filter(last_names__icontains=search)
+            fname_contributors = \
+                Contributor.objects.filter(first_names__icontains=search)
 
-            for contributor in contributors:
+            for contributor in fname_contributors:
                 for book in contributor.book_set.all():
                     books.add(book)
+
+        lname_contributors = \
+            Contributor.objects.filter(last_names__icontains=search)
+
+        for contributor in lname_contributors:
+            for book in contributor.book_set.all():
+                books.add(book)
 
     return render(request, "reviews/search-results.html", {"form": form, "search_text": search_text, "books": books})
 
@@ -89,7 +97,7 @@ def publisher_edit(request, pk=None):
             else:
                 messages.success(request, "Publisher \"{}\" was updated.".format(updated_publisher))
 
-            return redirect("publisher_detail", updated_publisher.pk)
+            return redirect("publisher_edit", updated_publisher.pk)
     else:
         form = PublisherForm(instance=publisher)
 
@@ -107,9 +115,11 @@ def review_edit(request, book_pk, review_pk=None):
 
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=review)
+
         if form.is_valid():
             updated_review = form.save(False)
             updated_review.book = book
+
             if review is None:
                 messages.success(request, "Review for \"{}\" created.".format(book))
             else:
@@ -117,7 +127,6 @@ def review_edit(request, book_pk, review_pk=None):
                 messages.success(request, "Review for \"{}\" updated.".format(book))
 
             updated_review.save()
-
             return redirect("book_detail", book.pk)
     else:
         form = ReviewForm(instance=review)
@@ -141,6 +150,7 @@ def book_media(request, pk):
             book = form.save(False)
 
             cover = form.cleaned_data.get("cover")
+
             if cover:
                 image = Image.open(cover)
                 image.thumbnail((300, 300))

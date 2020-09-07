@@ -6,6 +6,7 @@ from django import forms
 from django.conf import settings
 from django.test import TestCase, Client
 from django.utils import timezone
+
 from reviews.forms import BookMediaForm
 from reviews.models import Book, Publisher
 from reviews.views import book_media
@@ -15,7 +16,7 @@ class Activity1Test(TestCase):
     @classmethod
     def setUpTestData(cls):
         p = Publisher.objects.create(name='Test Publisher')
-        Book.objects.create(title='Test Book', publication_date=timezone.now(), publisher=p)
+        b = Book.objects.create(title='Test Book', publication_date=timezone.now(), publisher=p)
 
     def test_form_definition(self):
         """Test that the BookMediaForm has the correct field."""
@@ -39,7 +40,7 @@ class Activity1Test(TestCase):
 
     @mock.patch('reviews.views.render', name='render')
     @mock.patch('reviews.views.get_object_or_404', name='get_object_or_404')
-    def test_render_call(self, mock_g_o_o_404, mock_render):
+    def test_render_call(self, mock_g_o_o_404 ,mock_render):
         """Test that the view calls render with the correct arguments and returns it."""
         request = mock.MagicMock(name='request')
         resp = book_media(request, 'pk')

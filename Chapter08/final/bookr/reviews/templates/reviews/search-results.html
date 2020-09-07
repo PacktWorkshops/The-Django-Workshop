@@ -21,14 +21,12 @@
         <br/>
         <span class="text-info">Contributors: </span>
         {% for contributor in book.contributors.all %}
-        {{ contributor.first_names }} {{ contributor.last_names }}{% if not forloop.last %}, {% endif %}
+            {{ contributor.first_names }} {{ contributor.last_names }}{% if not forloop.last %}, {% endif %}
         {% endfor %}
     </li>
     {% empty %}
-    <li class="list-group-item">No results found.</li>
+        <li class="list-group-item">No results found.</li>
     {% endfor %}
 </ul>
 {% endif %}
 {% endblock %}
-
-
