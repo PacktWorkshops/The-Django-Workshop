@@ -24,8 +24,6 @@ def book_search(request):
         search_in = form.cleaned_data.get("search_in") or "title"
         if search_in == "title":
             books = Book.objects.filter(title__icontains=search)
-        if search_in == "title":
-            books = Book.objects.filter(title__icontains=search)
         else:
             fname_contributors = \
                 Contributor.objects.filter(first_names__icontains=search)
