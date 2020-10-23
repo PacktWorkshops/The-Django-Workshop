@@ -11,4 +11,4 @@ def read_csv(filename):
        print("Unable to open the csv file. Exception: {}".format(file_read_error))
 
 if __name__ == '__main__':
-    read_csv('person_details.csv')
+    read_csv('market_cap.csv')
