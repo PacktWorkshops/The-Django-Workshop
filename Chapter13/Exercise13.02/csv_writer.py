@@ -17,6 +17,6 @@ def write_csv(filename, header, data):
 
 if __name__ == '__main__':
     header = ['name', 'age', 'gender']
-    data = [['John Doe', 32, 'M'], ['Tom Harris', 21, 'M'], ['Melinda Scurr', 25, 'F']]
+    data = [['Richard', 32, 'M'], ['Mumzil', 21, 'F'], ['Melinda', 25, 'F']]
     filename = 'sample_output.csv'
     write_csv(filename, header, data)
