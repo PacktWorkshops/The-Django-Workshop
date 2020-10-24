@@ -4,7 +4,6 @@ from . import views, api_views
 
 router = DefaultRouter()
 router.register(r'books', api_views.BookViewSet)
-router.register(r'reviews', api_views.ReviewViewSet)
 
 urlpatterns = [
     path('books/', views.book_list, name='book_list'),
