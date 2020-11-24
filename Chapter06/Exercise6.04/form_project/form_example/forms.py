@@ -10,7 +10,7 @@ BOOK_CHOICES = (
     (
         "Non-Fiction", (
             ("1", "Deep Learning with Keras"),
-            ("2", "The Django Workshop")
+            ("2", "Web Development with Django")
         )
     ),
     (

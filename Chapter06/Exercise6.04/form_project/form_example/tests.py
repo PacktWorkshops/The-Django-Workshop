@@ -10,7 +10,7 @@ from form_example.forms import ExampleForm, RADIO_CHOICES, BOOK_CHOICES
 from form_example.views import form_example
 
 
-class Exercise5Test(TestCase):
+class Exercise4Test(TestCase):
     def test_fields_in_view(self):
         """"
         Test that some fields exist in the rendered template, assume that if all the fields exist on the form class
@@ -23,9 +23,9 @@ class Exercise5Test(TestCase):
                                        response.content.decode('ascii')))
 
         self.assertIn(b'<p><label for="id_text_input">Text input:</label> <input type="text" name="text_input" '
-                      b'maxlength="3" required id="id_text_input"></p>', response.content)
+                      b'required id="id_text_input"></p>', response.content)
         self.assertIn(b'<p><label for="id_password_input">Password input:</label> <input type="password" '
-                      b'name="password_input" minlength="8" required id="id_password_input"></p>', response.content)
+                      b'name="password_input" required id="id_password_input"></p>', response.content)
         self.assertIn(b'<p><label for="id_checkbox_on">Checkbox on:</label> <input type="checkbox" '
                       b'name="checkbox_on" required id="id_checkbox_on"></p>', response.content)
 
@@ -63,11 +63,12 @@ class Exercise5Test(TestCase):
         mock_request.POST = QueryDict(
             b'csrfmiddlewaretoken=9z38afmpT4579d1AWewuQrIppZFYbbjm9szCXQdYDyG4n17PgZWG9VqRpK2CChaB&text_input=tex&'
             b'password_input=password123&checkbox_on=on&radio_input=Value+Two&favorite_book=1&books_you_own=1&'
-            b'books_you_own=4&text_area=Text&integer_input=10&float_input=3.4&decimal_input=1.345&'
+            b'books_you_own=4&text_area=Text&integer_input=10&float_input=3.4&decimal_input=1.34&'
             b'email_input=user%40example.com&date_input=2019-12-11&hidden_input=Hidden+Value&submit_input=Submit+Input'
         )
         mock_request.META = {}
         form_example(mock_request)
+
         mock_print.assert_any_call("text_input: (<class 'str'>) tex")
         mock_print.assert_any_call("password_input: (<class 'str'>) password123")
         mock_print.assert_any_call("checkbox_on: (<class 'bool'>) True")
@@ -77,7 +78,7 @@ class Exercise5Test(TestCase):
         mock_print.assert_any_call("text_area: (<class 'str'>) Text")
         mock_print.assert_any_call("integer_input: (<class 'int'>) 10")
         mock_print.assert_any_call("float_input: (<class 'float'>) 3.4")
-        mock_print.assert_any_call("decimal_input: (<class 'decimal.Decimal'>) 1.345")
+        mock_print.assert_any_call("decimal_input: (<class 'decimal.Decimal'>) 1.34")
         mock_print.assert_any_call("email_input: (<class 'str'>) user@example.com")
         mock_print.assert_any_call("date_input: (<class 'datetime.date'>) 2019-12-11")
         mock_print.assert_any_call("hidden_input: (<class 'str'>) Hidden Value")
@@ -110,7 +111,7 @@ class Exercise5Test(TestCase):
         self.assertIsInstance(form.fields['float_input'], forms.FloatField)
 
         self.assertIsInstance(form.fields['decimal_input'], forms.DecimalField)
-        self.assertEqual(form.fields['decimal_input'].max_digits, 5)
+        self.assertEqual(form.fields['decimal_input'].max_digits, 3)
 
         self.assertIsInstance(form.fields['email_input'], forms.EmailField)
 
