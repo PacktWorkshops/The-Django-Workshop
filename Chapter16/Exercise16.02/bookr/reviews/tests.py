@@ -15,7 +15,7 @@ class Exercise2Test(TestCase):
         self.assertIn(
             b'<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>',
             resp.content)
-        self.assertIn(b'<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
+        self.assertIn(b'<script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
         self.assertIn(b'<script src="/static/react-example.js" type="text/babel"></script>', resp.content)
 
     def test_js_content(self):

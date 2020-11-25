@@ -28,7 +28,7 @@ class Activity1Test(TestCase):
         self.assertIn(
             b'<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>',
             resp.content)
-        self.assertIn(b'<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
+        self.assertIn(b'<script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
         self.assertIn(b'<script src="/static/recent-reviews.js" type="text/babel"></script>', resp.content)
         self.assertIn(b'ReactDOM.render(<RecentReviews url="/api/reviews/?limit=6" />,', resp.content)
         self.assertIn(b'document.getElementById(\'recent_reviews\')', resp.content)
@@ -43,7 +43,7 @@ class Activity1Test(TestCase):
         self.assertNotIn(
             b'<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>',
             resp.content)
-        self.assertNotIn(b'<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
+        self.assertNotIn(b'<script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>', resp.content)
         self.assertNotIn(b'<script src="/static/recent-reviews.js" type="text/babel"></script>', resp.content)
         self.assertNotIn(b'ReactDOM.render(<RecentReviews url="/api/reviews/?limit=6" />,', resp.content)
         self.assertNotIn(b'document.getElementById(\'recent_reviews\')', resp.content)
