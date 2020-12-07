@@ -1,3 +1,4 @@
+[Unit]
 Description=Bookr Gunicorn Socket
 
 [Socket]
