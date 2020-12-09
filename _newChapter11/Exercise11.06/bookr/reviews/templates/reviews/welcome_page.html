@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% load review_tags %}
-{% block content %}
-  <br>
-  <h1>Welcome to Bookr! We have a total of {% books_count %} books.</h1>
-  <hr>
-  <h1>{{ 'Most recent books published:'|title }}</h1>
-{% recent_books %}
-{% endblock %}
