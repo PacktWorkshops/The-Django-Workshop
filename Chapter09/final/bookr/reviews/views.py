@@ -2,7 +2,8 @@ from io import BytesIO
 
 from PIL import Image
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.exceptions import PermissionDenied
 from django.core.files.images import ImageFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -102,6 +103,7 @@ def book_detail(request, pk):
 def is_staff_user(user):
     return user.is_staff
 
+
 @user_passes_test(is_staff_user)
 def publisher_edit(request, pk=None):
     if pk is not None:
@@ -163,6 +165,7 @@ def review_edit(request, book_pk, review_pk=None):
                    "related_instance": book,
                    "related_model_type": "Book"
                    })
+
 
 @login_required
 def book_media(request, pk):

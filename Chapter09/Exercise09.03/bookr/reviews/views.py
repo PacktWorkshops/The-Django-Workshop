@@ -2,7 +2,8 @@ from io import BytesIO
 
 from PIL import Image
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.exceptions import PermissionDenied
 from django.core.files.images import ImageFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -23,8 +24,6 @@ def book_search(request):
     if form.is_valid() and form.cleaned_data["search"]:
         search = form.cleaned_data["search"]
         search_in = form.cleaned_data.get("search_in") or "title"
-        if search_in == "title":
-            books = Book.objects.filter(title__icontains=search)
         if search_in == "title":
             books = Book.objects.filter(title__icontains=search)
         else:
@@ -87,6 +86,7 @@ def book_detail(request, pk):
 def is_staff_user(user):
     return user.is_staff
 
+
 # @permission_required('edit_publisher')  # 9.03.1
 @user_passes_test(is_staff_user)  # 9.03.2
 def publisher_edit(request, pk=None):
@@ -112,13 +112,12 @@ def publisher_edit(request, pk=None):
                   {"form": form, "instance": publisher, "model_type": "Publisher"})
 
 
-@login_required   # 9.03.3
+@login_required  # 9.03.3
 def review_edit(request, book_pk, review_pk=None):
     book = get_object_or_404(Book, pk=book_pk)
 
     if review_pk is not None:
         review = get_object_or_404(Review, book_id=book_pk, pk=review_pk)
-		# 9.03.4
         user = request.user
         if not user.is_staff and review.creator.id != user.id:
             raise PermissionDenied
@@ -151,7 +150,8 @@ def review_edit(request, book_pk, review_pk=None):
                    "related_model_type": "Book"
                    })
 
-@login_required   # 9.03.3
+
+@login_required  # 9.03.3
 def book_media(request, pk):
     book = get_object_or_404(Book, pk=pk)
 

@@ -26,23 +26,24 @@
               <li class="nav-item active">
                 <a class="nav-link" href="/books/">Home <span class="sr-only">(current)</span></a>
               </li>
-			  {% if user.is_authenticated %}
+              {% if user.is_authenticated %}
                 <li class="nav-item">
                   <a class="nav-link" href="/accounts/logout">Logout</a>
                 </li>
-			  {% else %}
+              {% else %}
                 <li class="nav-item">
                   <a class="nav-link" href="/accounts/login">Login</a>
                 </li>
-			  {% endif %}
+              {% endif %}
             </ul>
             <form action="{% url 'book_search' %}" class="form-inline my-2 my-lg-0">
              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="{{ search_text }}" minlength="3">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
-			{% if user.is_authenticated %}
-      		  <a class="nav-link" href="/accounts/profile">User: {{ user.username }}</a>
-		    {% endif %}
+            {% if user.is_authenticated %}
+              <a class="nav-link" href="/accounts/profile">User:
+              {{ user.username }}</a>
+            {% endif %}
           </div>
         </nav>
         <div class="container-fluid">
