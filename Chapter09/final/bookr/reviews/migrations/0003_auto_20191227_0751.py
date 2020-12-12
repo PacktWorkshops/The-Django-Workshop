@@ -11,5 +11,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='book',
+            name='publisher',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='reviews.Publisher'),
+        ),
+        migrations.AlterField(
+            model_name='review',
+            name='date_edited',
+            field=models.DateTimeField(help_text='The date and time the review was last edited.', null=True),
+        ),
     ]
-
