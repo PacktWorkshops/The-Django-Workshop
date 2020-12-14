@@ -30,6 +30,7 @@ def profile(request):
     figure = graphs.Figure()
     scatter = graphs.Scatter(x=months, y=books_read)
     figure.add_trace(scatter)
+    figure.update_layout(xaxis_title="Month", yaxis_title="No. of books read")	
     plot_html = plot(figure, output_type='div')
 
     # Add to template
