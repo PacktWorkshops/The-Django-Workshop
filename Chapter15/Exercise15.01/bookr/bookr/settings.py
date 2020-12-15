@@ -33,12 +33,14 @@ class Dev(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
-        'django.contrib.admin',
+        'bookr_admin.apps.BookrAdminConfig',
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'rest_framework',
+        'rest_framework.authtoken',
         'reviews'
     ]
 

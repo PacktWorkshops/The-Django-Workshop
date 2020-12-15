@@ -33,12 +33,14 @@ class Dev(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
-        'django.contrib.admin',
+        'bookr_admin.apps.BookrAdminConfig',
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'rest_framework',
+        'rest_framework.authtoken',
         'reviews',
         'debug_toolbar',
         'crispy_forms'
@@ -107,7 +109,7 @@ class Dev(Configuration):
 
     LANGUAGE_CODE = 'en-us'
 
-    TIME_ZONE = values.Value('UTC')
+    TIME_ZONE = 'UTC'
 
     USE_I18N = True
 
@@ -124,9 +126,7 @@ class Dev(Configuration):
 
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     MEDIA_URL = '/media/'
-
     INTERNAL_IPS = ['127.0.0.1']
-
     CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 

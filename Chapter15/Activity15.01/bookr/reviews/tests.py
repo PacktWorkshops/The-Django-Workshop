@@ -42,6 +42,8 @@ class Activity1Test(TestCase):
     def test_book_media_render_call(self, mock_book_media_form, mock_render):
         """Test that the `render` call in book_media no longer contains `is_file_upload` item."""
         req = mock.MagicMock(spec=HttpRequest, name='request')
+        req.user = mock.MagicMock()
+        req.user.is_authenticated = True
         req.method = 'GET'
         mock_book = mock.MagicMock(spec=Book, name='book')
         with mock.patch('reviews.views.get_object_or_404', return_value=mock_book) as mock_get_object_or_404:

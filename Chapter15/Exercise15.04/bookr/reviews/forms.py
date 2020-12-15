@@ -33,6 +33,9 @@ class SearchForm(forms.Form):
         self.helper.form_method = "get"
         self.helper.add_input(Submit("", "Search"))
 
+    def clean_search_in(self):
+        return self.cleaned_data["search_in"] or "title"
+
 
 class BookMediaForm(forms.ModelForm):
     class Meta:
