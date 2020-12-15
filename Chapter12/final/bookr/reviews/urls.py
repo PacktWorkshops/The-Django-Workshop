@@ -9,7 +9,7 @@ router.register(r'reviews', api_views.ReviewViewSet)
 
 urlpatterns = [
     path('api/login', api_views.Login.as_view(), name='login'),
-    path('api/', include(router.urls), name='api'),
+    path('api/', include(router.urls, 'api')),
     path('books/', views.book_list, name='book_list'),
     path('books/<int:pk>/', views.book_detail, name='book_detail'),
     path('books/<int:book_pk>/reviews/new/', views.review_edit, name='review_create'),
