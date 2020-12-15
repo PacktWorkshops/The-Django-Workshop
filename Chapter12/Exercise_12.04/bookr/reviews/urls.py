@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register(r'book', api_views.BookViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls), name='book'),
+    path('api/', include(router.urls), name='api'),
     path('books/', views.book_list, name='book_list'),
     path('books/<int:pk>/', views.book_detail, name='book_detail'),
     path('books/<int:book_pk>/reviews/new/', views.review_edit, name='review_create'),
