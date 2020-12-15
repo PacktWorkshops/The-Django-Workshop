@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Bookr{% endblock %}
+
+{% block heading %}Profile{% endblock %}
+
+{% block content %}
+  <ul>
+      <li>Username: {{ user.username }} </li>
+      <li>Name: {{ user.first_name }} {{ user.last_name }}</li>
+      <li>Date Joined: {{ user.date_joined }} </li>
+      <li>Email: {{ user.email }}</li>
+      <li>Last Login: {{ user.last_login }}</li>
+      <li>Groups: {{ groups }}{% if not groups %}None{% endif %} </li>
+      <li>Permissions:
+      {% if permissions %}
+      <ul>
+      {% for permission in permissions %}
+        <li>{{ permission }}</li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+      {% if not permissions %}
+      None
+      {% endif %}
+      </li>
+	  
+	  <li>Location: {{ reviewer_profile.location }} </li>
+	  <li>Favourite Book: <a href="reviews/book/{{ reviewer_profile.favourite_book.id }}">
+			  {{ reviewer_profile.favourite_book.title}}</li>
+
+  </ul>
+
+  
+  
+
+{% endblock %}
+

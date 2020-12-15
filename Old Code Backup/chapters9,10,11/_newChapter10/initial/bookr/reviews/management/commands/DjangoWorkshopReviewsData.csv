@@ -1,0 +1,37 @@
+content:Review,,,,,
+review_content,review_rating,review_date_created,review_date_edited,review_creator,review_book
+Fair.,3,2019-12-11 06:06:08,2019-12-11 11:37:24,alice,Advanced Deep Learning with Keras
+Interesting.,3,2019-12-19 10:41:54,2019-12-20 00:02:50,alice,Natural Language Processing with TensorFlow
+Great Read.,5,2019-12-25 05:51:46,2019-12-25 23:54:42,alice,Hands-On Reinforcement Learning with Python
+Interesting.,3,2019-12-26 09:29:49,2019-12-26 10:47:05,alice,Brave New World
+Inspiring.,5,2019-12-27 21:40:38,2019-12-28 18:24:26,alice,To Kill A Mocking Bird
+Fair.,3,2019-12-29 12:13:46,2019-12-29 17:48:10,alice,1984
+Quite good.,4,2020-01-05 12:56:32,2020-01-05 17:06:36,alice,Animal Farm: A Fairy Story
+Interesting book.,4,2020-01-16 11:53:08,2020-01-16 19:43:44,alice,The Talisman
+Fair.,3,2019-12-08 16:28:03,2019-12-08 20:25:29,bob,Hands-On Machine Learning for Algorithmic Trading
+Definitely just for the fans.,2,2019-12-14 01:09:37,2019-12-15 00:02:54,bob,Architects of Intelligence
+Interesting book.,4,2019-12-21 17:12:26,2019-12-22 05:31:11,bob,Natural Language Processing with TensorFlow
+Great Read.,5,2019-12-22 16:26:47,2019-12-23 07:27:25,bob,Hands-On Reinforcement Learning with Python
+Quite good.,4,2019-12-24 18:04:24,2019-12-25 10:30:54,bob,Brave New World
+Fair.,3,2019-12-25 11:25:04,2019-12-26 04:37:03,bob,The Catcher in the Rye
+Interesting.,3,2019-12-27 06:50:28,2019-12-27 11:47:08,bob,Pride and Prejudice
+Interesting book.,4,2020-01-03 01:05:11,2020-01-03 19:05:07,bob,1984
+Not my cup of tea.,1,2020-01-11 13:24:49,2020-01-11 17:43:29,bob,Animal Farm: A Fairy Story
+Not my cup of tea.,1,2020-01-17 14:01:43,2020-01-17 18:49:53,bob,Paul Clifford
+A tad mediocre.,2,2020-01-19 11:49:32,2020-01-20 08:04:20,bob,The Talisman
+Interesting.,3,2019-12-13 03:54:24,2019-12-13 15:47:40,carol,Advanced Deep Learning with Keras
+I cant put this one down..,5,2019-12-15 21:01:18,2019-12-16 05:36:58,carol,Hands-On Machine Learning for Algorithmic Trading
+Quite good.,4,2019-12-21 13:12:42,2019-12-21 20:17:21,carol,Natural Language Processing with TensorFlow
+Definitely just for the fans.,2,2019-12-22 01:08:29,2019-12-22 03:04:15,carol,Hands-On Reinforcement Learning with Python
+Definitely just for the fans.,2,2019-12-30 18:42:53,2019-12-31 05:46:52,carol,The Catcher in the Rye
+Interesting.,3,2020-01-05 21:29:58,2020-01-06 14:30:30,carol,Farenheit 451
+I cant put this one down..,5,2020-01-13 15:49:38,2020-01-13 21:36:38,carol,Animal Farm: A Fairy Story
+Interesting book.,4,2019-12-15 03:50:23,2019-12-15 07:34:07,david,Hands-On Machine Learning for Algorithmic Trading
+Interesting.,3,2019-12-21 23:29:12,2019-12-22 10:09:14,david,Architects of Intelligence
+Fair.,3,2019-12-25 03:47:56,2019-12-25 06:09:56,david,Deep Reinforcement Learning Hands-On
+Fair.,3,2020-01-02 20:06:01,2020-01-03 10:58:23,david,Brave New World
+Fair.,3,2020-01-10 07:18:52,2020-01-10 11:42:49,david,To Kill A Mocking Bird
+Definitely just for the fans.,2,2020-01-15 18:11:03,2020-01-15 18:14:18,david,The Great Gatsby
+Interesting.,3,2020-01-26 08:29:57,2020-01-27 08:14:39,david,The Catcher in the Rye
+A tad mediocre.,2,2020-01-31 17:36:07,2020-01-31 23:28:11,david,Farenheit 451
+Definitely just for the fans.,2,2020-02-03 13:19:35,2020-02-04 03:26:46,david,Paul Clifford

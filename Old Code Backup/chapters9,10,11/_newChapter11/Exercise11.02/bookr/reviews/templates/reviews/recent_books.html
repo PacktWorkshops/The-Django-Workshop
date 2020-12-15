@@ -1,0 +1,7 @@
+{% for book in books %}
+      <li>
+            <span class="text-primary">{{ book.title }}</span>
+            <br>
+            <span class="text-info"> Publication Date: </span> <span>{{ book.publication_date }}</span>
+      </li>
+{% endfor %}
