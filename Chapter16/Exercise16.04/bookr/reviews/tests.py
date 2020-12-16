@@ -33,7 +33,7 @@ class Exercise4Test(TestCase):
         self.assertIn(').then((response) => {', static_content)
         self.assertIn('return response.json();', static_content)
         self.assertIn('}).then((data) => {', static_content)
-        self.assertIn('this.setState({ fetchInProgress: false, books: data });', static_content)
+        self.assertIn('this.setState({ fetchInProgress: false, books: data })', static_content)
         self.assertIn('const bookListItems = this.state.books.map((book) => {', static_content)
         self.assertIn('return <li key={ book.pk }>{ book.title }</li>;', static_content)
         self.assertIn('const buttonText = this.state.fetchInProgress  ? \'Fetch in Progress\' : \'Fetch\';',

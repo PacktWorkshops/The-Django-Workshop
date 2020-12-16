@@ -9,12 +9,10 @@ class InstanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-
         if kwargs.get("instance"):
             button_title = "Save"
         else:
             button_title = "Create"
-
         self.helper.add_input(Submit("", button_title))
 
 
@@ -43,8 +41,11 @@ class SearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_method = 'get'
+        self.helper.form_method = "get"
         self.helper.add_input(Submit("", "Search"))
+
+    def clean_search_in(self):
+        return self.cleaned_data["search_in"] or "title"
 
 
 class BookMediaForm(InstanceForm):

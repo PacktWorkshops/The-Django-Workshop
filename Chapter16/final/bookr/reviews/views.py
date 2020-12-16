@@ -2,6 +2,8 @@ from io import BytesIO
 
 from PIL import Image
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.core.files.images import ImageFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -12,22 +14,28 @@ from .utils import average_rating
 
 
 def index(request):
-    return render(request, "base.html")
+    viewed_books = [Book.objects.get(id=book_id) for book_id in request.session.get('viewed_books', [])]
+
+    context = {
+        "viewed_books": viewed_books,
+    }
+    return render(request, "reviews/index.html", context)
 
 
 def book_search(request):
     search_text = request.GET.get("search", "")
     form = SearchForm(request.GET)
+
     books = set()
 
     if form.is_valid() and form.cleaned_data["search"]:
         search = form.cleaned_data["search"]
-        search_in = form.cleaned_data.get("search_in") or "title"
-        if search_in == "title":
+        if form.cleaned_data["search_in"] == "title":
             books = Book.objects.filter(title__icontains=search)
         else:
             contributors = Contributor.objects.filter(first_names__icontains=search) | \
                            Contributor.objects.filter(last_names__icontains=search)
+
             for contributor in contributors:
                 for book in contributor.book_set.all():
                     books.add(book)
@@ -70,9 +78,23 @@ def book_detail(request, pk):
             "book_rating": None,
             "reviews": None
         }
+    if request.user.is_authenticated:
+        max_viewed_books_length = 5
+        viewed_books = request.session.get('viewed_books', [])
+        if pk in viewed_books:
+            viewed_books.pop(viewed_books.index(pk))
+        viewed_books.insert(0, pk)
+        viewed_books = viewed_books[:max_viewed_books_length]
+        request.session['viewed_books'] = viewed_books
+
     return render(request, "reviews/book_detail.html", context)
 
 
+def is_staff_user(user):
+    return user.is_staff
+
+
+@user_passes_test(is_staff_user)
 def publisher_edit(request, pk=None):
     if pk is not None:
         publisher = get_object_or_404(Publisher, pk=pk)
@@ -96,11 +118,15 @@ def publisher_edit(request, pk=None):
                   {"form": form, "instance": publisher, "model_type": "Publisher"})
 
 
+@login_required
 def review_edit(request, book_pk, review_pk=None):
     book = get_object_or_404(Book, pk=book_pk)
 
     if review_pk is not None:
         review = get_object_or_404(Review, book_id=book_pk, pk=review_pk)
+        user = request.user
+        if not user.is_staff and review.creator.id != user.id:
+            raise PermissionDenied
     else:
         review = None
 
@@ -130,6 +156,7 @@ def review_edit(request, book_pk, review_pk=None):
                    })
 
 
+@login_required
 def book_media(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -153,4 +180,5 @@ def book_media(request, pk):
     else:
         form = BookMediaForm(instance=book)
 
-    return render(request, "reviews/instance-form.html", {"instance": book, "form": form, "model_type": "Book"})
+    return render(request, "reviews/instance-form.html",
+                  {"instance": book, "form": form, "model_type": "Book"})
