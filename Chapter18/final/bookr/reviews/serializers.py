@@ -1,20 +1,21 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied, NotAuthenticated
-from rest_framework.relations import StringRelatedField
+from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 
 from .models import Book, Publisher, Review
 from .utils import average_rating
 
 
 class PublisherSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Publisher
-        fields = ['pk', 'name', 'website', 'email']
+        fields = ['name', 'website', 'email']
 
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = ['username', 'email']
@@ -58,12 +59,16 @@ class BookSerializer(serializers.ModelSerializer):
         reviews = book.review_set.all()
         if reviews:
             return average_rating([review.rating for review in reviews])
+        else:
+            None
 
     def book_reviews(self, book):
         reviews = book.review_set.all()
         if reviews:
             return ReviewSerializer(reviews, many=True).data
+        else:
+            None
 
     class Meta:
         model = Book
-        fields = ['pk', 'title', 'publication_date', 'isbn', 'publisher', 'rating', 'reviews']
+        fields = ['title', 'publication_date', 'isbn', 'publisher', 'rating', 'reviews']

@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 
 import os
 
+from configurations.wsgi import get_wsgi_application
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bookr.settings')
 os.environ.setdefault('DJANGO_CONFIGURATION', 'Prod')
-
-from configurations.wsgi import get_wsgi_application
 
 application = get_wsgi_application()

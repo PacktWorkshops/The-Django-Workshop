@@ -57,8 +57,6 @@ class Activity1Test(TestCase):
         s = re.sub(r'^\s+', '', static_content, flags=re.MULTILINE)
         s = re.sub(r'\s+$', '', s, flags=re.MULTILINE)
 
-        self.assertIn("'use strict';", s)
-
         review_display_class = """class ReviewDisplay extends React.Component {
 constructor(props) {
 super(props);
@@ -131,7 +129,7 @@ return;
 this.state.currentUrl = this.state.previousUrl;
 this.fetchReviews();
 }
-render () {
+render() {
 if (this.state.loading) {
 return <h5>Loading...</h5>;
 }
@@ -141,7 +139,8 @@ onClick={ () => { this.loadPrevious() } }
 disabled={ this.state.previousUrl == null }>
 Previous
 </button>;
-const nextButton = <button className="btn btn-secondary float-right"
+const nextButton = <button
+className="btn btn-secondary float-right"
 onClick={ () => { this.loadNext() } }
 disabled={ this.state.nextUrl == null }>
 Next
@@ -159,8 +158,8 @@ return <div>
 { reviewItems }
 </div>
 <div>
-{previousButton}
-{nextButton}
+{ previousButton }
+{ nextButton }
 </div>
 </div>;
 }

@@ -25,15 +25,24 @@
               <li class="nav-item active">
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
               </li>
+			{% if user.is_authenticated %}
               <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+                <a class="nav-link" href="/accounts/logout">Logout</a>
               </li>
+			{% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="/accounts/login">Login</a>
+              </li>
+			{% endif %}
             </ul>
             <form action="{% url 'book_search' %}" class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
                      name="search" value="{{ search_text }}" minlength="3">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
+			{% if user.is_authenticated %}
+			<a class="nav-link" href="/accounts/profile">User:  {{ user.username }}</a>
+			{% endif %} 
           </div>
         </nav>
         <div class="container-fluid">
@@ -44,18 +53,6 @@
             </div>
           {% endfor %}
         {% block content %}
-          <h2>Welcome to Bookr!</h2>
-          <h4>Recent Reviews</h4>
-          <div id="recent_reviews"></div>
-          <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-          <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-          <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-          <script src="{% static 'recent-reviews.js' %}" type="text/babel"></script>
-          <script type="text/babel">
-              ReactDOM.render(<RecentReviews url="{% url 'api:review-list' %}?limit=6" />,
-                  document.getElementById('recent_reviews')
-                  );
-          </script>
         {% endblock %}
         </div>
   <!-- Copyright -->

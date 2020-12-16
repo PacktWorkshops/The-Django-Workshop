@@ -1,5 +1,3 @@
-'use strict';
-
 class ReviewDisplay extends React.Component {
     constructor(props) {
         super(props);
@@ -7,9 +5,9 @@ class ReviewDisplay extends React.Component {
     }
 
     render () {
-        const review = this.state.review;
+      const review = this.state.review;
 
-        return <div className="col mb-4">
+      return <div className="col mb-4">
             <div className="card">
                 <div className="card-body">
                     <h5 className="card-title">{ review.book }
@@ -22,8 +20,9 @@ class ReviewDisplay extends React.Component {
                     <a href={'/books/' + review.book_id + '/' } className="card-link">View Book</a>
                 </div>
             </div>
-         </div>;
+        </div>;
     }
+
 }
 
 class RecentReviews extends React.Component {
@@ -41,23 +40,22 @@ class RecentReviews extends React.Component {
     fetchReviews() {
         if (this.state.loading)
             return;
-
         this.setState( {loading: true} );
 
         fetch(this.state.currentUrl, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
+          method: 'GET',
+          headers: {
+              Accept: 'application/json'
+          }
         }).then((response) => {
-            return response.json()
+          return response.json()
         }).then((data) => {
-            this.setState({
+        this.setState({
                 loading: false,
                 reviews: data.results,
                 nextUrl: data.next,
                 previousUrl: data.previous
-            })
+          })
         })
     }
 
@@ -66,8 +64,8 @@ class RecentReviews extends React.Component {
     }
 
     loadNext() {
-        if (this.state.nextUrl == null)
-            return;
+      if (this.state.nextUrl == null)
+          return;
 
         this.state.currentUrl = this.state.nextUrl;
         this.fetchReviews();
@@ -81,23 +79,24 @@ class RecentReviews extends React.Component {
         this.fetchReviews();
     }
 
-    render () {
+    render() {
         if (this.state.loading) {
             return <h5>Loading...</h5>;
         }
 
         const previousButton = <button
-                                className="btn btn-secondary"
-                                onClick={ () => { this.loadPrevious() } }
-                                disabled={ this.state.previousUrl == null }>
-              Previous
-            </button>;
+            className="btn btn-secondary"
+            onClick={ () => { this.loadPrevious() } }
+            disabled={ this.state.previousUrl == null }>
+                Previous
+        </button>;
 
-        const nextButton = <button className="btn btn-secondary float-right"
-                            onClick={ () => { this.loadNext() } }
-                            disabled={ this.state.nextUrl == null }>
-              Next
-            </button>;
+        const nextButton = <button
+            className="btn btn-secondary float-right"
+            onClick={ () => { this.loadNext() } }
+            disabled={ this.state.nextUrl == null }>
+                Next
+        </button>;
 
         let reviewItems;
 
@@ -114,8 +113,8 @@ class RecentReviews extends React.Component {
                 { reviewItems }
             </div>
             <div>
-                {previousButton}
-                {nextButton}
+                { previousButton }
+                { nextButton }
             </div>
         </div>;
     }
