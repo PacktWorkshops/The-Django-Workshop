@@ -17,7 +17,7 @@ class Activity1Test(TestCase):
     def load_csv():
         """Run the loadcsv management command. This is only necessary on some tests."""
         management.call_command('loadcsv', csv=os.path.join(settings.BASE_DIR, 'reviews', 'management', 'commands',
-                                                            'DjangoWorkshopData.csv'))
+                                                            'WebDevWithDjangoData.csv'))
 
     def test_search_form_fields(self):
         """Test that the SearchForm is defined with the correct fields."""
