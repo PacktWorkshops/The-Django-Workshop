@@ -1,6 +1,6 @@
 # The-Django-Workshop
 
-NOTE: This GH Repo will be migrated by end of this week. 
+NOTE: This GH Repo is currently being migrated. 
 
 Chapter 1-5 code is now frozen.
 
