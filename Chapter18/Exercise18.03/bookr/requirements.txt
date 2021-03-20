@@ -5,7 +5,7 @@ django-configurations==2.2
 django-crispy-forms==1.8.1
 django-debug-toolbar==2.2
 django-rest-framework==0.1.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 Pillow==7.0.0
 pytz==2019.3
 six==1.14.0
