@@ -3,7 +3,7 @@ dj-database-url==0.5.0
 Django==3.0.3
 django-configurations==2.2
 django-crispy-forms==1.8.1
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 django-rest-framework==0.1.0
 djangorestframework==3.11.0
 Pillow==7.0.0
